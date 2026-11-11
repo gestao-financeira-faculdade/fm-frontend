@@ -1,0 +1,11 @@
+@if (vazio()) {
+  <app-empty-state
+    icone="pi pi-chart-line"
+    titulo="Sem dados para o gráfico"
+    mensagem="Execute uma simulação para visualizar o cone de incerteza."
+  />
+} @else {
+  <div [style.height]="altura()">
+    <p-chart type="line" [data]="data()" [options]="options()" height="100%" ariaLabel="Cone de incerteza do saldo" />
+  </div>
+}

@@ -1,0 +1,45 @@
+<p-dialog
+  header="Nova categoria"
+  [visible]="visivel()"
+  (visibleChange)="visivel.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [style]="{ width: '30rem' }"
+  [breakpoints]="{ '640px': '95vw' }"
+>
+  <form [formGroup]="form" id="form-categoria" (ngSubmit)="salvar()" class="space-y-4">
+    <div>
+      <label for="cat-nome" class="campo-rotulo">Nome *</label>
+      <input pInputText id="cat-nome" formControlName="name" class="w-full" placeholder="Ex.: Serviços em Nuvem" />
+      @if (form.controls.name.touched && form.controls.name.invalid) {
+        <small class="campo-erro">Informe o nome da categoria.</small>
+      }
+    </div>
+
+    <div>
+      <span class="campo-rotulo">Tipo *</span>
+      <p-selectbutton formControlName="categoryType" [options]="tipos" optionLabel="label" optionValue="value" />
+    </div>
+
+    <div class="flex items-center justify-between rounded-lg border border-slate-200 p-3">
+      <label for="cat-anexo" class="text-sm">
+        <span class="block font-medium text-slate-800">Exige comprovante sempre</span>
+        <span class="block text-xs text-slate-500">Bloqueia a liquidação sem anexo fiscal, independente do valor.</span>
+      </label>
+      <p-toggleswitch inputId="cat-anexo" formControlName="requiresAttachmentAlways" />
+    </div>
+
+    <div class="flex items-center justify-between rounded-lg border border-slate-200 p-3">
+      <label for="cat-fixo" class="text-sm">
+        <span class="block font-medium text-slate-800">Custo fixo</span>
+        <span class="block text-xs text-slate-500">Classifica a categoria como custo fixo (não variável).</span>
+      </label>
+      <p-toggleswitch inputId="cat-fixo" formControlName="fixedCost" />
+    </div>
+  </form>
+
+  <ng-template #footer>
+    <p-button label="Cancelar" severity="secondary" [text]="true" (onClick)="visivel.set(false)" />
+    <p-button label="Salvar" icon="pi pi-check" (onClick)="salvar()" [loading]="salvando()" />
+  </ng-template>
+</p-dialog>

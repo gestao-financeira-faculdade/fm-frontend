@@ -1,0 +1,57 @@
+<p-dialog
+  header="Nova simulação de Monte Carlo"
+  [visible]="visivel()"
+  (visibleChange)="visivel.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [closable]="!executando()"
+  [style]="{ width: '34rem' }"
+  [breakpoints]="{ '640px': '95vw' }"
+>
+  @if (erro()) {
+    <p-message severity="error" styleClass="mb-4 w-full" [text]="erro()!" />
+  }
+
+  <form [formGroup]="form" id="form-simulacao" (ngSubmit)="executar()" class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div class="sm:col-span-2">
+      <span class="campo-rotulo">Horizonte de projeção *</span>
+      <p-selectbutton formControlName="horizonDays" [options]="horizontes" optionLabel="label" optionValue="value" [allowEmpty]="false" />
+    </div>
+
+    <div class="sm:col-span-2">
+      <label for="sim-cenarios" class="campo-rotulo">Número de cenários *</label>
+      <p-inputnumber inputId="sim-cenarios" formControlName="numScenarios" [min]="cenariosMin" [max]="cenariosMax" [step]="50000" [showButtons]="true" locale="pt-BR" styleClass="w-full" inputStyleClass="w-full" />
+      <small class="mt-1 block text-xs text-slate-500">Entre {{ cenariosMin | number }} e {{ cenariosMax | number }}.</small>
+      @if (form.controls.numScenarios.touched && form.controls.numScenarios.invalid) {
+        <small class="campo-erro">Informe um valor entre {{ cenariosMin | number }} e {{ cenariosMax | number }}.</small>
+      }
+    </div>
+
+    <div>
+      <label for="sim-inad" class="campo-rotulo">Inadimplência esperada (%) *</label>
+      <p-inputnumber inputId="sim-inad" formControlName="expectedDefaultRate" [minFractionDigits]="1" [maxFractionDigits]="2" suffix=" %" locale="pt-BR" styleClass="w-full" inputStyleClass="w-full" />
+    </div>
+    <div>
+      <label for="sim-choque" class="campo-rotulo">Choque de custo variável (%) *</label>
+      <p-inputnumber inputId="sim-choque" formControlName="variableCostShockPct" [minFractionDigits]="1" [maxFractionDigits]="2" suffix=" %" locale="pt-BR" styleClass="w-full" inputStyleClass="w-full" />
+    </div>
+
+    <div class="sm:col-span-2">
+      <label for="sim-seed" class="campo-rotulo">Semente aleatória (opcional)</label>
+      <p-inputnumber inputId="sim-seed" formControlName="randomSeed" [useGrouping]="false" placeholder="Aleatória" styleClass="w-full" inputStyleClass="w-full" />
+      <small class="mt-1 block text-xs text-slate-500">Informe uma semente para obter resultados reproduzíveis.</small>
+    </div>
+  </form>
+
+  @if (executando()) {
+    <div class="mt-4">
+      <p-progressbar mode="indeterminate" styleClass="h-1.5" />
+      <p class="m-0 mt-2 text-center text-xs text-slate-500">Executando cenários no motor HPC…</p>
+    </div>
+  }
+
+  <ng-template #footer>
+    <p-button label="Restaurar padrão" severity="secondary" [text]="true" [disabled]="executando()" (onClick)="restaurarPadrao()" />
+    <p-button label="Executar simulação" icon="pi pi-play" (onClick)="executar()" [loading]="executando()" />
+  </ng-template>
+</p-dialog>

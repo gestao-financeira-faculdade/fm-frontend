@@ -1,0 +1,31 @@
+<header class="sticky top-0 z-10 flex h-16 items-center gap-3 border-b border-slate-200 bg-white/90 px-4 backdrop-blur lg:px-6">
+  <p-button
+    class="lg:hidden"
+    icon="pi pi-bars"
+    [text]="true"
+    severity="secondary"
+    ariaLabel="Abrir menu"
+    (onClick)="abrirMenu.emit()"
+  />
+
+  @if (ambiente) {
+    <p-tag [value]="ambiente" severity="warn" />
+  }
+
+  <div class="flex-1"></div>
+
+  <button
+    type="button"
+    class="flex cursor-pointer items-center gap-3 rounded-lg border-0 bg-transparent px-2 py-1 hover:bg-slate-100"
+    (click)="menu.toggle($event)"
+    aria-haspopup="true"
+  >
+    <p-avatar [label]="iniciais()" shape="circle" styleClass="!bg-marca-100 !text-marca-800 font-semibold" />
+    <span class="hidden text-left leading-tight sm:block">
+      <span class="block text-sm font-medium text-slate-800">{{ usuario()?.fullName }}</span>
+      <span class="block text-xs text-slate-500">{{ perfil() }}</span>
+    </span>
+    <i class="pi pi-angle-down text-xs text-slate-500"></i>
+  </button>
+  <p-menu #menu [model]="itensUsuario" [popup]="true" appendTo="body" />
+</header>

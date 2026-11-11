@@ -1,0 +1,44 @@
+@if (carregando()) {
+  @for (i of [1, 2, 3]; track i) {
+    <p-skeleton height="3rem" styleClass="mb-3" />
+  }
+} @else if (eventos().length === 0) {
+  <app-empty-state icone="pi pi-history" titulo="Sem eventos de auditoria" />
+} @else {
+  <p-timeline [value]="eventos()" styleClass="historico-timeline">
+    <ng-template #marker let-evento>
+      <span class="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-sm">
+        <i [class]="meta(evento.action).icone" class="text-sm"></i>
+      </span>
+    </ng-template>
+    <ng-template #content let-evento>
+      <div class="mb-6 rounded-lg border border-slate-200 bg-white p-3">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <p-tag [value]="meta(evento.action).label" [severity]="meta(evento.action).severidade" />
+          <span class="text-xs text-slate-500">{{ data(evento) | date: 'dd/MM/yyyy HH:mm:ss' }}</span>
+        </div>
+        <div class="mt-2 text-sm text-slate-700">
+          por <strong>{{ ator(evento) }}</strong>
+          @if (evento.clientIp) {
+            <span class="text-slate-400"> · IP {{ evento.clientIp }}</span>
+          }
+        </div>
+        @if (evento.previousState || evento.newState) {
+          <p-button
+            [label]="expandido() === evento.id ? 'Ocultar alterações' : 'Ver alterações'"
+            [icon]="expandido() === evento.id ? 'pi pi-chevron-up' : 'pi pi-chevron-down'"
+            size="small"
+            [text]="true"
+            styleClass="mt-1 !px-0"
+            (onClick)="alternar(evento.id)"
+          />
+          @if (expandido() === evento.id) {
+            <div class="mt-2">
+              <app-estado-diff [anterior]="evento.previousState" [novo]="evento.newState" />
+            </div>
+          }
+        }
+      </div>
+    </ng-template>
+  </p-timeline>
+}

@@ -1,0 +1,84 @@
+<app-page-header
+  titulo="Simulação de risco de liquidez"
+  [subtitulo]="id() ? 'Simulação específica' : 'Última simulação executada'"
+  icone="pi pi-chart-scatter"
+>
+  @if (id()) {
+    <p-button label="Ver última" icon="pi pi-history" severity="secondary" [text]="true" routerLink="/simulacoes" />
+  }
+  <p-button *appPermissao="permissoes.executar" label="Nova simulação" icon="pi pi-play" (onClick)="dialogAberto.set(true)" />
+</app-page-header>
+
+@if (carregando()) {
+  <div class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    @for (i of [1, 2, 3, 4]; track i) {
+      <p-skeleton height="6rem" />
+    }
+  </div>
+  <p-skeleton height="22rem" />
+} @else {
+@if (simulacao(); as s) {
+  <section class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div class="flex items-center gap-2 text-sm font-medium text-slate-500">
+        VaR 99%
+        <i class="pi pi-info-circle text-xs" pTooltip="Valor em risco com 99% de confiança: saldo no pior 1% dos cenários ao fim do horizonte."></i>
+      </div>
+      <div class="valor-monetario mt-1 text-2xl font-semibold" [class.text-despesa]="s.var99 < 0">{{ s.var99 | moeda }}</div>
+    </div>
+    <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div class="text-sm font-medium text-slate-500">Mediana (P50)</div>
+      <div class="valor-monetario mt-1 text-2xl font-semibold text-slate-900">{{ s.medianP50 | moeda }}</div>
+    </div>
+    <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div class="flex items-center gap-2 text-sm font-medium text-slate-500">
+        Probabilidade de ruína
+        <i class="pi pi-info-circle text-xs" pTooltip="Percentual de cenários em que o caixa fica negativo no horizonte."></i>
+      </div>
+      <div class="mt-1 text-2xl font-semibold" [class.text-despesa]="s.ruinProbabilityPct >= 5" [class.text-alerta]="s.ruinProbabilityPct > 0 && s.ruinProbabilityPct < 5">
+        {{ s.ruinProbabilityPct | number: '1.2-2' }}%
+      </div>
+    </div>
+    <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div class="text-sm font-medium text-slate-500">Execução</div>
+      <div class="mt-1 text-2xl font-semibold text-slate-900">{{ s.executionTimeMs | number }} ms</div>
+      <div class="mt-1 truncate text-xs text-slate-500" [pTooltip]="s.executionDevice"><i class="pi pi-bolt text-[10px]"></i> {{ s.executionDevice }}</div>
+    </div>
+  </section>
+
+  <section class="mb-6 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+    <h2 class="m-0 mb-4 text-lg font-semibold text-slate-900">Faixas de percentis diárias</h2>
+    <app-cone-incerteza-chart [projecao]="projecao()" />
+  </section>
+
+  <section class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+    <h2 class="m-0 mb-4 text-base font-semibold text-slate-900">Parâmetros</h2>
+    <dl class="m-0 grid grid-cols-2 gap-x-8 gap-y-4 sm:grid-cols-3 lg:grid-cols-6">
+      <div><dt class="campo-rotulo">Horizonte</dt><dd class="m-0">{{ s.horizonDays }} dias</dd></div>
+      <div><dt class="campo-rotulo">Cenários</dt><dd class="m-0">{{ s.numScenarios | number }}</dd></div>
+      <div><dt class="campo-rotulo">Inadimplência</dt><dd class="m-0">{{ s.expectedDefaultRate !== undefined ? (s.expectedDefaultRate | number: '1.1-2') + '%' : '—' }}</dd></div>
+      <div><dt class="campo-rotulo">Choque custo var.</dt><dd class="m-0">{{ s.variableCostShockPct !== undefined ? (s.variableCostShockPct | number: '1.1-2') + '%' : '—' }}</dd></div>
+      <div><dt class="campo-rotulo">Semente</dt><dd class="m-0">{{ s.randomSeed ?? '—' }}</dd></div>
+      <div><dt class="campo-rotulo">Executada em</dt><dd class="m-0">{{ s.createdAt ? (s.createdAt | date: 'dd/MM/yyyy HH:mm') : '—' }}</dd></div>
+      <div class="col-span-2 sm:col-span-3 lg:col-span-6">
+        <dt class="campo-rotulo">ID</dt>
+        <dd class="m-0 font-mono text-xs text-slate-500">{{ s.id }}</dd>
+      </div>
+    </dl>
+  </section>
+} @else if (semSimulacao()) {
+  <div class="rounded-xl border border-slate-200 bg-white shadow-sm">
+    <app-empty-state
+      icone="pi pi-chart-scatter"
+      titulo="Nenhuma simulação executada"
+      mensagem="Execute uma simulação de Monte Carlo para projetar trajetórias de liquidez de 30, 60 ou 90 dias."
+    >
+      <p-button *appPermissao="permissoes.executar" label="Executar primeira simulação" icon="pi pi-play" (onClick)="dialogAberto.set(true)" />
+    </app-empty-state>
+  </div>
+} @else {
+  <app-empty-state icone="pi pi-exclamation-triangle" titulo="Não foi possível carregar a simulação" />
+}
+}
+
+<app-nova-simulacao-dialog *appPermissao="permissoes.executar" [(visivel)]="dialogAberto" (concluida)="aoConcluir($event)" />

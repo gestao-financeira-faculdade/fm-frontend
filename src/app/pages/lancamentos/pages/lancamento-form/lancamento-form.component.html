@@ -1,0 +1,99 @@
+<app-page-header titulo="Novo lançamento" subtitulo="O lançamento é criado com status Pendente" icone="pi pi-plus">
+  <p-button label="Voltar" icon="pi pi-arrow-left" severity="secondary" [text]="true" routerLink="/lancamentos" />
+</app-page-header>
+
+<form [formGroup]="form" (ngSubmit)="salvar()" class="max-w-4xl">
+  <div class="space-y-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+    <section>
+      <span class="campo-rotulo">Tipo *</span>
+      <p-selectbutton formControlName="entryType" [options]="tipoOpcoes" optionLabel="label" optionValue="value" [allowEmpty]="false" />
+    </section>
+
+    <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="sm:col-span-2">
+        <label for="l-desc" class="campo-rotulo">Descrição *</label>
+        <input pInputText id="l-desc" formControlName="description" class="w-full" placeholder="Ex.: Licença Cloud AWS" />
+        @if (form.controls.description.touched && form.controls.description.invalid) {
+          <small class="campo-erro">Informe a descrição.</small>
+        }
+      </div>
+      <div>
+        <label for="l-valor" class="campo-rotulo">Valor *</label>
+        <p-inputnumber inputId="l-valor" formControlName="originalAmount" mode="currency" [currency]="form.controls.currency.value || 'BRL'" locale="pt-BR" styleClass="w-full" inputStyleClass="w-full" />
+        @if (form.controls.originalAmount.touched && form.controls.originalAmount.invalid) {
+          <small class="campo-erro">Informe um valor maior que zero.</small>
+        }
+      </div>
+      <div>
+        <label for="l-moeda" class="campo-rotulo">Moeda</label>
+        <p-select inputId="l-moeda" formControlName="currency" [options]="moedas" optionLabel="label" optionValue="value" styleClass="w-full" />
+      </div>
+    </section>
+
+    <section class="grid grid-cols-1 gap-4 md:grid-cols-3">
+      <div>
+        <label for="l-competencia" class="campo-rotulo">Competência *</label>
+        <p-datepicker inputId="l-competencia" formControlName="competenceDate" dateFormat="dd/mm/yy" [showIcon]="true" styleClass="w-full" />
+      </div>
+      <div>
+        <label for="l-vencimento" class="campo-rotulo">Vencimento *</label>
+        <p-datepicker inputId="l-vencimento" formControlName="dueDate" dateFormat="dd/mm/yy" [showIcon]="true" [minDate]="form.controls.competenceDate.value" styleClass="w-full" />
+        @if (form.controls.dueDate.touched && form.controls.dueDate.invalid) {
+          <small class="campo-erro">Informe o vencimento.</small>
+        }
+        @if (form.hasError('vencimentoAntesCompetencia')) {
+          <small class="campo-erro">O vencimento não pode ser anterior à competência.</small>
+        }
+      </div>
+    </section>
+
+    <p-divider />
+
+    <section class="grid grid-cols-1 gap-4 md:grid-cols-3">
+      <div>
+        <label for="l-categoria" class="campo-rotulo">Categoria *</label>
+        <p-select inputId="l-categoria" formControlName="categoryId" [options]="categoriasDoTipo()" optionLabel="name" optionValue="id" [filter]="true" [loading]="carregandoCadastros()" placeholder="Selecione" emptyMessage="Nenhuma categoria para este tipo" styleClass="w-full" />
+        @if (form.controls.categoryId.touched && form.controls.categoryId.invalid) {
+          <small class="campo-erro">Selecione a categoria.</small>
+        }
+      </div>
+      <div>
+        <label for="l-conta" class="campo-rotulo">Conta financeira *</label>
+        <p-select inputId="l-conta" formControlName="accountId" [options]="contas()" optionLabel="name" optionValue="id" [filter]="true" [loading]="carregandoCadastros()" placeholder="Selecione" styleClass="w-full" />
+        @if (form.controls.accountId.touched && form.controls.accountId.invalid) {
+          <small class="campo-erro">Selecione a conta.</small>
+        }
+      </div>
+      <div>
+        <label for="l-contraparte" class="campo-rotulo">{{ form.controls.entryType.value === 'PAYABLE' ? 'Fornecedor' : 'Cliente' }} *</label>
+        <p-select inputId="l-contraparte" formControlName="counterpartyId" [options]="contrapartes()" optionValue="id" [filter]="true" filterBy="legalName,tradeName,taxId" [loading]="carregandoCadastros()" placeholder="Selecione" styleClass="w-full">
+          <ng-template #selectedItem let-c>{{ rotuloContraparte(c) }}</ng-template>
+          <ng-template #item let-c>
+            <div>
+              <div>{{ rotuloContraparte(c) }}</div>
+              <div class="text-xs text-slate-500">{{ c.taxId | cpfCnpj }}</div>
+            </div>
+          </ng-template>
+        </p-select>
+        @if (form.controls.counterpartyId.touched && form.controls.counterpartyId.invalid) {
+          <small class="campo-erro">Selecione a contraparte.</small>
+        }
+      </div>
+    </section>
+
+    @if (exigiraComprovante()) {
+      <p-message severity="info" styleClass="w-full">
+        <span class="text-sm">
+          <i class="pi pi-paperclip"></i>
+          Este lançamento exigirá um comprovante fiscal anexado antes da liquidação
+          (valor ≥ {{ limiteComprovante | moeda }} ou categoria com comprovante obrigatório).
+        </span>
+      </p-message>
+    }
+  </div>
+
+  <div class="mt-6 flex justify-end gap-2">
+    <p-button label="Cancelar" severity="secondary" [text]="true" (onClick)="cancelar()" />
+    <p-button type="submit" label="Criar lançamento" icon="pi pi-check" [loading]="salvando()" />
+  </div>
+</form>

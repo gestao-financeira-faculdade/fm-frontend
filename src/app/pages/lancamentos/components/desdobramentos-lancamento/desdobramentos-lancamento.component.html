@@ -1,0 +1,39 @@
+<p-treeTable [value]="arvore()" [loading]="carregando()" dataKey="id">
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Lançamento</th>
+      <th>Status</th>
+      <th class="text-right">Valor original</th>
+      <th class="text-right">Saldo</th>
+      <th>Vencimento</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-rowNode let-no="rowData">
+    <tr [ttRow]="rowNode" [class.bg-marca-50]="no.id === lancamentoId()">
+      <td>
+        <span class="inline-flex items-center gap-1">
+          <p-treeTableToggler [rowNode]="rowNode" />
+          @if (no.id === lancamentoId()) {
+            <span class="font-semibold text-marca-800">{{ no.description || 'Este lançamento' }}</span>
+            <span class="text-xs text-marca-600">(atual)</span>
+          } @else {
+            <a [routerLink]="['/lancamentos', no.id]" class="text-marca-700 hover:underline">
+              {{ no.description || no.id }}
+            </a>
+          }
+        </span>
+      </td>
+      <td><app-status-lancamento-tag [status]="no.status" /></td>
+      <td class="valor-monetario text-right">{{ no.originalAmount | moeda: no.currency }}</td>
+      <td class="valor-monetario text-right">{{ no.outstandingAmount | moeda: no.currency }}</td>
+      <td>{{ no.dueDate | date: 'dd/MM/yyyy' }}</td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td colspan="5">
+        <app-empty-state icone="pi pi-sitemap" titulo="Sem desdobramentos" mensagem="Este lançamento não possui baixas parciais." />
+      </td>
+    </tr>
+  </ng-template>
+</p-treeTable>

@@ -1,0 +1,62 @@
+<app-page-header titulo="Relatórios" subtitulo="Exportação do livro-razão de lançamentos" icone="pi pi-file-export" />
+
+<form [formGroup]="form" (ngSubmit)="gerar()" class="max-w-4xl space-y-6">
+  <section class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+    <h2 class="m-0 mb-4 text-base font-semibold text-slate-900">1. Formato</h2>
+    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2" role="radiogroup" aria-label="Formato do relatório">
+      @for (f of formatos; track f.value) {
+        <button
+          type="button"
+          role="radio"
+          [attr.aria-checked]="form.controls.format.value === f.value"
+          (click)="selecionarFormato(f.value)"
+          class="flex cursor-pointer items-start gap-3 rounded-lg border-2 bg-white p-4 text-left transition-colors"
+          [class]="form.controls.format.value === f.value ? 'border-marca-600 bg-marca-50' : 'border-slate-200 hover:border-slate-300'"
+        >
+          <i [class]="f.icone" class="mt-0.5 text-2xl" [class.text-marca-700]="form.controls.format.value === f.value"></i>
+          <span>
+            <span class="block font-semibold text-slate-900">{{ f.label }}</span>
+            <span class="block text-sm text-slate-500">{{ f.descricao }}</span>
+          </span>
+        </button>
+      }
+    </div>
+  </section>
+
+  <section class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div class="mb-4 flex items-center justify-between">
+      <h2 class="m-0 text-base font-semibold text-slate-900">2. Filtros <span class="font-normal text-slate-400">(opcionais)</span></h2>
+      <p-button label="Limpar" icon="pi pi-filter-slash" size="small" severity="secondary" [text]="true" (onClick)="limpar()" />
+    </div>
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div>
+        <label for="r-tipo" class="campo-rotulo">Tipo</label>
+        <p-select inputId="r-tipo" formControlName="entryType" [options]="tipoOpcoes" optionLabel="label" optionValue="value" [showClear]="true" placeholder="Todos" styleClass="w-full" />
+      </div>
+      <div>
+        <label for="r-status" class="campo-rotulo">Status</label>
+        <p-select inputId="r-status" formControlName="status" [options]="statusOpcoes" optionLabel="label" optionValue="value" [showClear]="true" placeholder="Todos" styleClass="w-full" />
+      </div>
+      <div>
+        <label for="r-categoria" class="campo-rotulo">Categoria</label>
+        <p-select inputId="r-categoria" formControlName="categoryId" [options]="categorias()" optionLabel="name" optionValue="id" [filter]="true" [showClear]="true" placeholder="Todas" styleClass="w-full" />
+      </div>
+      <div>
+        <label for="r-conta" class="campo-rotulo">Conta</label>
+        <p-select inputId="r-conta" formControlName="accountId" [options]="contas()" optionLabel="name" optionValue="id" [filter]="true" [showClear]="true" placeholder="Todas" styleClass="w-full" />
+      </div>
+      <div>
+        <label for="r-periodo" class="campo-rotulo">Vencimento (período)</label>
+        <p-datepicker inputId="r-periodo" formControlName="periodo" selectionMode="range" dateFormat="dd/mm/yy" [showIcon]="true" [showButtonBar]="true" [readonlyInput]="true" styleClass="w-full" />
+      </div>
+      <div>
+        <label for="r-busca" class="campo-rotulo">Descrição contém</label>
+        <input pInputText id="r-busca" formControlName="search" class="w-full" />
+      </div>
+    </div>
+  </section>
+
+  <div class="flex justify-end">
+    <p-button type="submit" label="Gerar e baixar" icon="pi pi-download" [loading]="gerando()" />
+  </div>
+</form>

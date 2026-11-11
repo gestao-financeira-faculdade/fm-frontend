@@ -1,0 +1,52 @@
+<p-dialog
+  header="Nova contraparte"
+  [visible]="visivel()"
+  (visibleChange)="visivel.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [style]="{ width: '34rem' }"
+  [breakpoints]="{ '640px': '95vw' }"
+>
+  <form [formGroup]="form" id="form-contraparte" (ngSubmit)="salvar()" class="space-y-4">
+    <div>
+      <span class="campo-rotulo">Tipo *</span>
+      <p-selectbutton formControlName="counterpartyType" [options]="tipos" optionLabel="label" optionValue="value" />
+    </div>
+
+    <div>
+      <label for="cp-razao" class="campo-rotulo">Razão social / Nome *</label>
+      <input pInputText id="cp-razao" formControlName="legalName" class="w-full" />
+      @if (form.controls.legalName.touched && form.controls.legalName.invalid) {
+        <small class="campo-erro">Informe a razão social.</small>
+      }
+    </div>
+
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div>
+        <label for="cp-fantasia" class="campo-rotulo">Nome fantasia</label>
+        <input pInputText id="cp-fantasia" formControlName="tradeName" class="w-full" />
+      </div>
+      <div>
+        <label for="cp-doc" class="campo-rotulo">CPF / CNPJ *</label>
+        <input
+          pInputText
+          id="cp-doc"
+          formControlName="taxId"
+          class="w-full"
+          inputmode="numeric"
+          maxlength="18"
+          placeholder="00.000.000/0000-00"
+          (blur)="formatarDocumento()"
+        />
+        @if (form.controls.taxId.touched && form.controls.taxId.invalid) {
+          <small class="campo-erro">CPF ou CNPJ inválido.</small>
+        }
+      </div>
+    </div>
+  </form>
+
+  <ng-template #footer>
+    <p-button label="Cancelar" severity="secondary" [text]="true" (onClick)="visivel.set(false)" />
+    <p-button label="Salvar" icon="pi pi-check" (onClick)="salvar()" [loading]="salvando()" />
+  </ng-template>
+</p-dialog>

@@ -1,0 +1,41 @@
+<app-page-header titulo="Minha conta" subtitulo="Dados cadastrais e perfil de acesso" icone="pi pi-user" />
+
+<p-card styleClass="max-w-2xl">
+  @if (carregando() && !usuario()) {
+    <p-skeleton height="1.25rem" styleClass="mb-3" />
+    <p-skeleton height="1.25rem" width="60%" />
+  } @else {
+  @if (usuario(); as u) {
+    <dl class="m-0 grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2">
+      <div>
+        <dt class="campo-rotulo">Nome</dt>
+        <dd class="m-0 text-slate-900">{{ u.fullName }}</dd>
+      </div>
+      <div>
+        <dt class="campo-rotulo">E-mail</dt>
+        <dd class="m-0 text-slate-900">{{ u.email }}</dd>
+      </div>
+      <div>
+        <dt class="campo-rotulo">Perfil</dt>
+        <dd class="m-0"><p-tag [value]="perfil()" severity="info" /></dd>
+      </div>
+      <div>
+        <dt class="campo-rotulo">Situação</dt>
+        <dd class="m-0">
+          <p-tag [value]="u.active ? 'Ativo' : 'Inativo'" [severity]="u.active ? 'success' : 'danger'" />
+        </dd>
+      </div>
+      <div class="sm:col-span-2">
+        <dt class="campo-rotulo">ID</dt>
+        <dd class="m-0 font-mono text-xs text-slate-500">{{ u.id }}</dd>
+      </div>
+    </dl>
+  }
+  }
+
+  <ng-template #footer>
+    <div class="flex justify-end">
+      <p-button label="Sair" icon="pi pi-sign-out" severity="danger" [outlined]="true" (onClick)="sair()" />
+    </div>
+  </ng-template>
+</p-card>

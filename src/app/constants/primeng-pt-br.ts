@@ -1,0 +1,37 @@
+import { Translation } from 'primeng/api';
+
+/** Tradução pt-BR dos textos internos do PrimeNG (datepicker, filtros, etc.). */
+export const PRIMENG_PT_BR: Translation = {
+  accept: 'Sim',
+  reject: 'Não',
+  choose: 'Escolher',
+  upload: 'Enviar',
+  cancel: 'Cancelar',
+  clear: 'Limpar',
+  apply: 'Aplicar',
+  dayNames: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'],
+  dayNamesShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
+  dayNamesMin: ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'],
+  monthNames: [
+    'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+    'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro',
+  ],
+  monthNamesShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+  today: 'Hoje',
+  weekHeader: 'Sem',
+  firstDayOfWeek: 0,
+  dateFormat: 'dd/mm/yy',
+  weak: 'Fraca',
+  medium: 'Média',
+  strong: 'Forte',
+  passwordPrompt: 'Digite a senha',
+  emptyMessage: 'Nenhum resultado encontrado',
+  emptyFilterMessage: 'Nenhum resultado encontrado',
+  searchMessage: '{0} resultados disponíveis',
+  selectionMessage: '{0} itens selecionados',
+  emptySelectionMessage: 'Nenhum item selecionado',
+  emptySearchMessage: 'Nenhum resultado encontrado',
+  noFileChosenMessage: '',
+  fileChosenMessage: '{0} arquivo(s)',
+  fileSizeTypes: ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
+};

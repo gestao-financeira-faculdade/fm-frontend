@@ -1,0 +1,12 @@
+<div class="flex flex-col items-center justify-center px-4 py-12 text-center">
+  <span class="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+    <i [class]="icone()" class="text-2xl"></i>
+  </span>
+  <h3 class="m-0 text-base font-semibold text-slate-800">{{ titulo() }}</h3>
+  @if (mensagem()) {
+    <p class="m-0 mt-1 max-w-md text-sm text-slate-500">{{ mensagem() }}</p>
+  }
+  <div class="mt-4">
+    <ng-content />
+  </div>
+</div>

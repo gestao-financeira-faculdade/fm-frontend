@@ -1,0 +1,82 @@
+<app-page-header titulo="Dashboard executivo" subtitulo="Posição de caixa e projeção de liquidez" icone="pi pi-chart-line">
+  <p-datepicker
+    [ngModel]="dataReferencia()"
+    (ngModelChange)="aoMudarData($event)"
+    dateFormat="dd/mm/yy"
+    [showIcon]="true"
+    [maxDate]="hoje"
+    [readonlyInput]="true"
+    ariaLabel="Data de referência"
+    inputStyleClass="w-36"
+  />
+  <p-button icon="pi pi-refresh" severity="secondary" [outlined]="true" ariaLabel="Atualizar" pTooltip="Atualizar" (onClick)="atualizar()" />
+</app-page-header>
+
+<section class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+  <app-kpi-card
+    titulo="Saldo consolidado"
+    icone="pi pi-building-columns"
+    [valor]="formatar(kpis()?.consolidatedBalance)"
+    [carregando]="carregandoKpis()"
+    legenda="Todas as contas ativas"
+  />
+  <app-kpi-card
+    titulo="A receber hoje"
+    icone="pi pi-arrow-down"
+    tom="receita"
+    [valor]="formatar(kpis()?.totalReceivableToday)"
+    [carregando]="carregandoKpis()"
+  />
+  <app-kpi-card
+    titulo="A pagar hoje"
+    icone="pi pi-arrow-up"
+    tom="despesa"
+    [valor]="formatar(kpis()?.totalPayableToday)"
+    [carregando]="carregandoKpis()"
+  />
+  <app-kpi-card
+    titulo="Inadimplência mensal"
+    icone="pi pi-percentage"
+    tom="alerta"
+    [valor]="formatarPercentual(kpis()?.monthlyDelinquencyRatePct?.value)"
+    [carregando]="carregandoKpis()"
+  />
+</section>
+
+<section class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+  <div class="mb-4 flex flex-wrap items-start justify-between gap-3">
+    <div>
+      <h2 class="m-0 text-lg font-semibold text-slate-900">Cone de incerteza</h2>
+      <p class="m-0 mt-1 text-sm text-slate-500">
+        Saldo realizado e projeção estocástica (Monte Carlo) por faixas de percentis.
+      </p>
+    </div>
+    <div class="flex flex-wrap items-center gap-2">
+      <p-select
+        [options]="opcoesHistorico"
+        [ngModel]="diasHistorico()"
+        (ngModelChange)="aoMudarHistorico($event)"
+        optionLabel="label"
+        optionValue="value"
+        ariaLabel="Dias de histórico"
+      />
+      @if (simulacaoId(); as id) {
+        <p-button label="Ver simulação" icon="pi pi-external-link" [text]="true" [routerLink]="['/simulacoes', id]" />
+      }
+    </div>
+  </div>
+
+  @if (carregandoCone()) {
+    <p-skeleton height="22rem" />
+  } @else if (projecao().length === 0 && historico().length === 0) {
+    <app-empty-state
+      icone="pi pi-chart-scatter"
+      titulo="Nenhuma projeção disponível"
+      mensagem="Execute uma simulação de Monte Carlo para gerar o cone de incerteza."
+    >
+      <p-button *appPermissao="permissoesSimulacao.executar" label="Ir para simulações" icon="pi pi-play" routerLink="/simulacoes" />
+    </app-empty-state>
+  } @else {
+    <app-cone-incerteza-chart [historico]="historico()" [projecao]="projecao()" />
+  }
+</section>

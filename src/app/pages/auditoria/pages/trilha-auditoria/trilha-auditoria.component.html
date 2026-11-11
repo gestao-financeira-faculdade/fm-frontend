@@ -1,0 +1,105 @@
+<app-page-header titulo="Trilha de auditoria" subtitulo="Registro imutável de todas as operações" icone="pi pi-history" />
+
+<app-filter-card [formGroup]="filtros" [carregando]="carregando()" (filtrar)="filtrar()" (limpar)="limpar()">
+  <div>
+    <label for="a-entidade" class="campo-rotulo">Entidade</label>
+    <p-select inputId="a-entidade" formControlName="entityType" [options]="entidades" optionLabel="label" optionValue="value" [showClear]="true" placeholder="Todas" styleClass="w-full" />
+  </div>
+  <div>
+    <label for="a-acao" class="campo-rotulo">Ação</label>
+    <p-select inputId="a-acao" formControlName="action" [options]="acoes" optionLabel="label" optionValue="value" [showClear]="true" placeholder="Todas" styleClass="w-full" />
+  </div>
+  <div class="sm:col-span-2">
+    <label for="a-periodo" class="campo-rotulo">Período</label>
+    <p-datepicker inputId="a-periodo" formControlName="periodo" selectionMode="range" dateFormat="dd/mm/yy" [showIcon]="true" [showButtonBar]="true" [readonlyInput]="true" styleClass="w-full" />
+  </div>
+  <div class="sm:col-span-2">
+    <label for="a-entidade-id" class="campo-rotulo">ID da entidade</label>
+    <input pInputText id="a-entidade-id" formControlName="entityId" class="w-full font-mono text-sm" placeholder="UUID" />
+  </div>
+  <div class="sm:col-span-2">
+    <label for="a-ator" class="campo-rotulo">ID do usuário (ator)</label>
+    <input pInputText id="a-ator" formControlName="actorUserId" class="w-full font-mono text-sm" placeholder="UUID" />
+  </div>
+  @if (erroFiltro()) {
+    <small class="campo-erro sm:col-span-2 lg:col-span-4">{{ erroFiltro() }}</small>
+  }
+</app-filter-card>
+
+<div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+  <p-table
+    [value]="registros()"
+    [lazy]="true"
+    (onLazyLoad)="aoCarregar($event)"
+    [paginator]="true"
+    [rows]="20"
+    [first]="primeiro()"
+    [totalRecords]="total()"
+    [rowsPerPageOptions]="[20, 50, 100]"
+    [loading]="carregando()"
+    [showCurrentPageReport]="true"
+    currentPageReportTemplate="{first}–{last} de {totalRecords}"
+    dataKey="id"
+  >
+    <ng-template #header>
+      <tr>
+        <th class="w-12"></th>
+        <th>Data / hora</th>
+        <th>Ação</th>
+        <th>Entidade</th>
+        <th>Ator</th>
+        <th>IP</th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-r let-expanded="expanded">
+      <tr>
+        <td>
+          <p-button
+            type="button"
+            [pRowToggler]="r"
+            [text]="true"
+            [rounded]="true"
+            severity="secondary"
+            [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+            ariaLabel="Detalhes"
+          />
+        </td>
+        <td class="whitespace-nowrap text-sm">{{ data(r) | date: 'dd/MM/yyyy HH:mm:ss' }}</td>
+        <td><p-tag [value]="meta(r.action).label" [severity]="meta(r.action).severidade" /></td>
+        <td>
+          <div class="text-sm">{{ entidadeLabel[r.entityType] || r.entityType }}</div>
+          @if (r.entityType === 'FINANCIAL_ENTRY') {
+            <a [routerLink]="['/lancamentos', r.entityId]" class="font-mono text-xs text-marca-700 hover:underline">{{ r.entityId }}</a>
+          } @else {
+            <span class="font-mono text-xs text-slate-500">{{ r.entityId }}</span>
+          }
+        </td>
+        <td class="text-sm">{{ ator(r) }}</td>
+        <td class="font-mono text-xs text-slate-500">{{ r.clientIp || '—' }}</td>
+      </tr>
+    </ng-template>
+    <ng-template #expandedrow let-r>
+      <tr>
+        <td colspan="6" class="bg-slate-50">
+          <div class="space-y-3 p-2">
+            <div class="flex flex-wrap gap-x-6 gap-y-1 text-xs text-slate-500">
+              <span>Correlation ID: <span class="font-mono">{{ r.correlationId || '—' }}</span></span>
+              @if (r.actorUserId) {
+                <span>Usuário: <span class="font-mono">{{ r.actorUserId }}</span></span>
+              }
+              <a class="cursor-pointer text-marca-700 hover:underline" (click)="filtrarPorEntidade(r)">
+                <i class="pi pi-filter text-[10px]"></i> Ver histórico desta entidade
+              </a>
+            </div>
+            <app-estado-diff [anterior]="r.previousState" [novo]="r.newState" />
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template #emptymessage>
+      <tr>
+        <td colspan="6"><app-empty-state icone="pi pi-history" titulo="Nenhum registro encontrado" /></td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

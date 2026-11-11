@@ -1,0 +1,74 @@
+<div class="flex min-h-screen">
+  <section class="relative hidden flex-1 flex-col justify-between overflow-hidden bg-marca-950 p-12 text-white lg:flex">
+    <div class="flex items-center gap-3">
+      <span class="flex h-10 w-10 items-center justify-center rounded-lg bg-marca-600">
+        <i class="pi pi-wallet text-lg"></i>
+      </span>
+      <span class="text-lg font-semibold">Gestão Financeira</span>
+    </div>
+
+    <div class="max-w-md">
+      <h2 class="m-0 text-3xl font-semibold leading-tight">Tesouraria, liquidez e risco em um só lugar.</h2>
+      <p class="mt-4 text-marca-200">
+        Lançamentos a pagar e a receber, baixas parciais com rastreabilidade completa e projeções de caixa por
+        simulação de Monte Carlo.
+      </p>
+    </div>
+
+    <ul class="m-0 grid list-none grid-cols-3 gap-6 p-0 text-sm text-marca-200">
+      <li><i class="pi pi-shield mb-2 block text-xl text-marca-300"></i>Trilha de auditoria imutável</li>
+      <li><i class="pi pi-chart-scatter mb-2 block text-xl text-marca-300"></i>Cone de incerteza P01–P95</li>
+      <li><i class="pi pi-paperclip mb-2 block text-xl text-marca-300"></i>Comprovantes fiscais</li>
+    </ul>
+  </section>
+
+  <section class="flex flex-1 items-center justify-center bg-white p-6">
+    <div class="w-full max-w-sm">
+      <h1 class="m-0 text-2xl font-semibold text-slate-900">Entrar</h1>
+      <p class="mb-8 mt-1 text-sm text-slate-500">Use suas credenciais corporativas.</p>
+
+      @if (erro()) {
+        <p-message severity="error" styleClass="mb-4 w-full" [text]="erro()!" />
+      }
+
+      <form [formGroup]="form" (ngSubmit)="entrar()" class="space-y-5">
+        <div>
+          <label for="email" class="campo-rotulo">E-mail</label>
+          <p-iconfield>
+            <p-inputicon styleClass="pi pi-envelope" />
+            <input
+              pInputText
+              id="email"
+              type="email"
+              formControlName="email"
+              autocomplete="username"
+              placeholder="nome@empresa.com"
+              class="w-full"
+            />
+          </p-iconfield>
+          @if (form.controls.email.touched && form.controls.email.invalid) {
+            <small class="campo-erro">Informe um e-mail válido.</small>
+          }
+        </div>
+
+        <div>
+          <label for="password" class="campo-rotulo">Senha</label>
+          <p-password
+            inputId="password"
+            formControlName="password"
+            [feedback]="false"
+            [toggleMask]="true"
+            autocomplete="current-password"
+            styleClass="w-full"
+            inputStyleClass="w-full"
+          />
+          @if (form.controls.password.touched && form.controls.password.invalid) {
+            <small class="campo-erro">Informe a senha.</small>
+          }
+        </div>
+
+        <p-button type="submit" label="Entrar" icon="pi pi-sign-in" styleClass="w-full" [loading]="carregando()" />
+      </form>
+    </div>
+  </section>
+</div>

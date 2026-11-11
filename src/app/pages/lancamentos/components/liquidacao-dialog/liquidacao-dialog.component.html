@@ -1,0 +1,99 @@
+<p-dialog
+  header="Liquidar lançamento"
+  [visible]="visivel()"
+  (visibleChange)="visivel.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [style]="{ width: '36rem' }"
+  [breakpoints]="{ '640px': '95vw' }"
+>
+  <div class="mb-4 rounded-lg bg-slate-50 p-3 text-sm">
+    <div class="font-medium text-slate-900">{{ lancamento().description }}</div>
+    <div class="mt-1 flex flex-wrap gap-x-6 gap-y-1 text-slate-600">
+      <span>Valor original: <strong class="valor-monetario">{{ lancamento().originalAmount | moeda: lancamento().currency }}</strong></span>
+      <span>Saldo devedor: <strong class="valor-monetario">{{ saldo() | moeda: lancamento().currency }}</strong></span>
+    </div>
+  </div>
+
+  @if (semAnexoObrigatorio()) {
+    <p-message severity="warn" styleClass="mb-4 w-full">
+      <span class="text-sm">
+        Este lançamento exige comprovante fiscal e ainda não possui anexo. A liquidação será recusada.
+        <a class="cursor-pointer font-semibold underline" (click)="aoIrParaAnexos()">Anexar agora</a>
+      </span>
+    </p-message>
+  }
+
+  @if (erro(); as e) {
+    <p-message [severity]="e.tipo === 'conflito' ? 'warn' : 'error'" styleClass="mb-4 w-full">
+      <div class="text-sm">
+        <div>{{ e.mensagem }}</div>
+        @if (e.tipo === 'conflito') {
+          <p-button label="Recarregar lançamento" icon="pi pi-refresh" size="small" [text]="true" (onClick)="aoRecarregar()" />
+        }
+        @if (e.tipo === 'anexo') {
+          <p-button label="Ir para anexos" icon="pi pi-paperclip" size="small" [text]="true" (onClick)="aoIrParaAnexos()" />
+        }
+      </div>
+    </p-message>
+  }
+
+  <form [formGroup]="form" id="form-liquidacao" (ngSubmit)="salvar()" class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div class="sm:col-span-2">
+      <label for="liq-pago" class="campo-rotulo">Valor pago *</label>
+      <p-inputnumber
+        inputId="liq-pago"
+        formControlName="paidAmount"
+        mode="currency"
+        [currency]="lancamento().currency"
+        locale="pt-BR"
+        styleClass="w-full"
+        inputStyleClass="w-full text-lg"
+      />
+      @if (form.controls.paidAmount.touched && form.controls.paidAmount.invalid) {
+        <small class="campo-erro">Informe um valor maior que zero.</small>
+      }
+    </div>
+
+    <div>
+      <label for="liq-desconto" class="campo-rotulo">Desconto</label>
+      <p-inputnumber inputId="liq-desconto" formControlName="discountAmount" mode="currency" [currency]="lancamento().currency" locale="pt-BR" styleClass="w-full" inputStyleClass="w-full" />
+    </div>
+    <div>
+      <label for="liq-data" class="campo-rotulo">Data da liquidação *</label>
+      <p-datepicker inputId="liq-data" formControlName="settlementDate" dateFormat="dd/mm/yy" [showIcon]="true" [maxDate]="hoje" appendTo="body" styleClass="w-full" />
+    </div>
+    <div>
+      <label for="liq-juros" class="campo-rotulo">Juros</label>
+      <p-inputnumber inputId="liq-juros" formControlName="interestAmount" mode="currency" [currency]="lancamento().currency" locale="pt-BR" styleClass="w-full" inputStyleClass="w-full" />
+    </div>
+    <div>
+      <label for="liq-multa" class="campo-rotulo">Multa</label>
+      <p-inputnumber inputId="liq-multa" formControlName="lateFeeAmount" mode="currency" [currency]="lancamento().currency" locale="pt-BR" styleClass="w-full" inputStyleClass="w-full" />
+    </div>
+
+    @if (parcial()) {
+      <div class="rounded-lg border border-amber-200 bg-amber-50 p-3 sm:col-span-2">
+        <div class="flex items-center gap-3">
+          <p-toggleswitch inputId="liq-parcial" formControlName="allowPartial" />
+          <label for="liq-parcial" class="text-sm font-medium text-amber-900">Permitir baixa parcial</label>
+        </div>
+        <p class="m-0 mt-2 text-xs text-amber-800">
+          O valor pago é menor que o saldo devedor. Será feita uma baixa parcial e um novo lançamento com o saldo
+          residual será gerado automaticamente.
+        </p>
+      </div>
+    }
+  </form>
+
+  <ng-template #footer>
+    <p-button label="Cancelar" severity="secondary" [text]="true" (onClick)="visivel.set(false)" />
+    <p-button
+      [label]="parcial() ? 'Liquidar parcialmente' : 'Liquidar'"
+      icon="pi pi-check"
+      severity="success"
+      (onClick)="salvar()"
+      [loading]="salvando()"
+    />
+  </ng-template>
+</p-dialog>

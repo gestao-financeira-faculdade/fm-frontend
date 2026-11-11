@@ -1,0 +1,107 @@
+<app-page-header titulo="Lançamentos" subtitulo="Contas a pagar e a receber" icone="pi pi-wallet">
+  <p-button
+    label="Exportar"
+    icon="pi pi-file-export"
+    severity="secondary"
+    [outlined]="true"
+    [loading]="exportando()"
+    (onClick)="menuExportar.toggle($event)"
+  />
+  <p-menu #menuExportar [model]="itensExportacao" [popup]="true" appendTo="body" />
+  <p-button *appPermissao="permissoes.criar" label="Novo lançamento" icon="pi pi-plus" routerLink="/lancamentos/novo" />
+</app-page-header>
+
+<app-filter-card [formGroup]="filtros" [carregando]="carregando()" (filtrar)="filtrar()" (limpar)="limpar()">
+  <div class="sm:col-span-2">
+    <label for="f-busca" class="campo-rotulo">Descrição</label>
+    <p-iconfield>
+      <p-inputicon styleClass="pi pi-search" />
+      <input pInputText id="f-busca" formControlName="search" placeholder="Buscar na descrição" class="w-full" />
+    </p-iconfield>
+  </div>
+  <div>
+    <label for="f-tipo" class="campo-rotulo">Tipo</label>
+    <p-select inputId="f-tipo" formControlName="entryType" [options]="tipoOpcoes" optionLabel="label" optionValue="value" [showClear]="true" placeholder="Todos" styleClass="w-full" />
+  </div>
+  <div>
+    <label for="f-status" class="campo-rotulo">Status</label>
+    <p-select inputId="f-status" formControlName="status" [options]="statusOpcoes" optionLabel="label" optionValue="value" [showClear]="true" placeholder="Todos" styleClass="w-full" />
+  </div>
+  <div>
+    <label for="f-categoria" class="campo-rotulo">Categoria</label>
+    <p-select inputId="f-categoria" formControlName="categoryId" [options]="categorias()" optionLabel="name" optionValue="id" [filter]="true" [showClear]="true" placeholder="Todas" styleClass="w-full" />
+  </div>
+  <div>
+    <label for="f-conta" class="campo-rotulo">Conta</label>
+    <p-select inputId="f-conta" formControlName="accountId" [options]="contas()" optionLabel="name" optionValue="id" [filter]="true" [showClear]="true" placeholder="Todas" styleClass="w-full" />
+  </div>
+  <div class="sm:col-span-2">
+    <label for="f-periodo" class="campo-rotulo">Vencimento (período)</label>
+    <p-datepicker inputId="f-periodo" formControlName="periodo" selectionMode="range" dateFormat="dd/mm/yy" [showIcon]="true" [showButtonBar]="true" [readonlyInput]="true" placeholder="dd/mm/aaaa – dd/mm/aaaa" styleClass="w-full" />
+  </div>
+</app-filter-card>
+
+<div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+  <p-table
+    [value]="lancamentos()"
+    [lazy]="true"
+    (onLazyLoad)="aoCarregar($event)"
+    [paginator]="true"
+    [rows]="tamanhoPagina"
+    [first]="primeiro()"
+    [totalRecords]="total()"
+    [rowsPerPageOptions]="[10, 20, 50, 100]"
+    [loading]="carregando()"
+    [rowHover]="true"
+    [showCurrentPageReport]="true"
+    currentPageReportTemplate="{first}–{last} de {totalRecords}"
+    dataKey="id"
+  >
+    <ng-template #header>
+      <tr>
+        <th>Vencimento</th>
+        <th>Descrição</th>
+        <th>Tipo</th>
+        <th>Categoria</th>
+        <th class="text-right">Valor</th>
+        <th class="text-right">Saldo</th>
+        <th>Status</th>
+        <th class="w-12"></th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-l>
+      <tr class="cursor-pointer" (click)="abrir(l)">
+        <td class="whitespace-nowrap">{{ l.dueDate | date: 'dd/MM/yyyy' }}</td>
+        <td>
+          <div class="font-medium text-slate-900">{{ l.description }}</div>
+          @if (l.counterpartyName) {
+            <div class="text-xs text-slate-500">{{ l.counterpartyName }}</div>
+          }
+          @if (l.parentEntryId) {
+            <div class="text-xs text-marca-600"><i class="pi pi-sitemap text-[10px]"></i> Resíduo de baixa parcial</div>
+          }
+        </td>
+        <td>
+          <span [class]="l.entryType === 'PAYABLE' ? 'text-despesa' : 'text-receita'" class="inline-flex items-center gap-1 text-sm">
+            <i [class]="l.entryType === 'PAYABLE' ? 'pi pi-arrow-up' : 'pi pi-arrow-down'" class="text-xs"></i>
+            {{ tipoLabel[l.entryType] }}
+          </span>
+        </td>
+        <td class="text-sm">{{ l.categoryName || '—' }}</td>
+        <td class="valor-monetario text-right">{{ l.originalAmount | moeda: l.currency }}</td>
+        <td class="valor-monetario text-right">{{ l.outstandingAmount | moeda: l.currency }}</td>
+        <td><app-status-lancamento-tag [status]="l.status" /></td>
+        <td>
+          <p-button icon="pi pi-angle-right" [text]="true" [rounded]="true" severity="secondary" ariaLabel="Abrir lançamento" />
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template #emptymessage>
+      <tr>
+        <td colspan="8">
+          <app-empty-state icone="pi pi-wallet" titulo="Nenhum lançamento encontrado" mensagem="Ajuste os filtros ou cadastre um novo lançamento." />
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

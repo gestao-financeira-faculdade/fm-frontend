@@ -1,0 +1,64 @@
+<p-dialog
+  header="Nova conta financeira"
+  [visible]="visivel()"
+  (visibleChange)="visivel.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [style]="{ width: '32rem' }"
+  [breakpoints]="{ '640px': '95vw' }"
+>
+  <form [formGroup]="form" id="form-conta" (ngSubmit)="salvar()" class="space-y-4">
+    <div>
+      <label for="conta-nome" class="campo-rotulo">Nome *</label>
+      <input pInputText id="conta-nome" formControlName="name" class="w-full" placeholder="Ex.: Conta Corrente Itaú" />
+      @if (form.controls.name.touched && form.controls.name.invalid) {
+        <small class="campo-erro">Informe o nome da conta.</small>
+      }
+    </div>
+
+    <div>
+      <label for="conta-tipo" class="campo-rotulo">Tipo *</label>
+      <p-select
+        inputId="conta-tipo"
+        formControlName="accountType"
+        [options]="tiposConta"
+        optionLabel="label"
+        optionValue="value"
+        styleClass="w-full"
+        appendTo="body"
+      />
+    </div>
+
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div class="sm:col-span-2">
+        <label for="conta-saldo" class="campo-rotulo">Saldo inicial *</label>
+        <p-inputnumber
+          inputId="conta-saldo"
+          formControlName="initialBalance"
+          mode="currency"
+          [currency]="form.controls.currency.value"
+          locale="pt-BR"
+          styleClass="w-full"
+          inputStyleClass="w-full"
+        />
+      </div>
+      <div>
+        <label for="conta-moeda" class="campo-rotulo">Moeda *</label>
+        <p-select
+          inputId="conta-moeda"
+          formControlName="currency"
+          [options]="moedas"
+          optionLabel="value"
+          optionValue="value"
+          styleClass="w-full"
+          appendTo="body"
+        />
+      </div>
+    </div>
+  </form>
+
+  <ng-template #footer>
+    <p-button label="Cancelar" severity="secondary" [text]="true" (onClick)="visivel.set(false)" />
+    <p-button label="Salvar" icon="pi pi-check" (onClick)="salvar()" [loading]="salvando()" />
+  </ng-template>
+</p-dialog>

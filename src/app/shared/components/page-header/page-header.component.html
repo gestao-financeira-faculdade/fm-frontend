@@ -1,0 +1,18 @@
+<header class="mb-6 flex flex-wrap items-start justify-between gap-4">
+  <div class="flex items-start gap-3">
+    @if (icone()) {
+      <span class="flex h-10 w-10 items-center justify-center rounded-lg bg-marca-50 text-marca-700">
+        <i [class]="icone()" class="text-lg"></i>
+      </span>
+    }
+    <div>
+      <h1 class="m-0 text-2xl font-semibold text-slate-900">{{ titulo() }}</h1>
+      @if (subtitulo()) {
+        <p class="m-0 mt-1 text-sm text-slate-500">{{ subtitulo() }}</p>
+      }
+    </div>
+  </div>
+  <div class="flex flex-wrap items-center gap-2">
+    <ng-content />
+  </div>
+</header>

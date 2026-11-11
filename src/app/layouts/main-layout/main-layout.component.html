@@ -1,0 +1,24 @@
+<div class="flex min-h-screen">
+  <aside class="fixed inset-y-0 left-0 hidden w-64 lg:block">
+    <app-nav-sidebar />
+  </aside>
+
+  <p-drawer
+    [visible]="menuMobileAberto()"
+    (visibleChange)="menuMobileAberto.set($event)"
+    [showCloseIcon]="false"
+    styleClass="!w-64 !border-0"
+    [modal]="true"
+  >
+    <ng-template #headless>
+      <app-nav-sidebar (navegou)="menuMobileAberto.set(false)" />
+    </ng-template>
+  </p-drawer>
+
+  <div class="flex min-w-0 flex-1 flex-col lg:pl-64">
+    <app-topbar (abrirMenu)="menuMobileAberto.set(true)" />
+    <main class="mx-auto w-full max-w-7xl flex-1 p-4 lg:p-8">
+      <router-outlet />
+    </main>
+  </div>
+</div>

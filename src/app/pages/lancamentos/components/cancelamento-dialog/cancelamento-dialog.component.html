@@ -1,0 +1,27 @@
+<p-dialog
+  header="Cancelar lançamento"
+  [visible]="visivel()"
+  (visibleChange)="visivel.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [style]="{ width: '30rem' }"
+  [breakpoints]="{ '640px': '95vw' }"
+>
+  <p class="m-0 mb-4 text-sm text-slate-600">
+    O lançamento <strong>{{ lancamento().description }}</strong> será marcado como <strong>Cancelado</strong>. Esta ação
+    fica registrada na trilha de auditoria e não pode ser desfeita.
+  </p>
+
+  <form [formGroup]="form" id="form-cancelamento" (ngSubmit)="confirmar()">
+    <label for="canc-motivo" class="campo-rotulo">Motivo *</label>
+    <textarea pTextarea id="canc-motivo" formControlName="reason" rows="3" class="w-full" [autoResize]="true"></textarea>
+    @if (form.controls.reason.touched && form.controls.reason.invalid) {
+      <small class="campo-erro">Descreva o motivo (mínimo de 5 caracteres).</small>
+    }
+  </form>
+
+  <ng-template #footer>
+    <p-button label="Voltar" severity="secondary" [text]="true" (onClick)="visivel.set(false)" />
+    <p-button label="Cancelar lançamento" icon="pi pi-times" severity="danger" (onClick)="confirmar()" [loading]="salvando()" />
+  </ng-template>
+</p-dialog>

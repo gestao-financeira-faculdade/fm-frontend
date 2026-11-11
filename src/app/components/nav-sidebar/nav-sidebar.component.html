@@ -1,0 +1,36 @@
+<nav class="flex h-full flex-col bg-marca-950 text-slate-200" aria-label="Menu principal">
+  <div class="flex h-16 items-center gap-3 px-5">
+    <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-marca-600 text-white">
+      <i class="pi pi-wallet"></i>
+    </span>
+    <div class="leading-tight">
+      <div class="text-sm font-semibold text-white">Gestão Financeira</div>
+      <div class="text-xs text-marca-200">Tesouraria &amp; Risco</div>
+    </div>
+  </div>
+
+  <div class="flex-1 overflow-y-auto px-3 py-4">
+    @for (grupo of grupos(); track $index) {
+      @if (grupo.titulo) {
+        <div class="mb-2 mt-5 px-3 text-xs font-semibold uppercase tracking-wider text-marca-300">
+          {{ grupo.titulo }}
+        </div>
+      }
+      <ul class="m-0 list-none space-y-1 p-0">
+        @for (item of grupo.itens; track item.rota) {
+          <li>
+            <a
+              [routerLink]="item.rota"
+              routerLinkActive="!bg-marca-700 !text-white"
+              class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-300 no-underline transition-colors hover:bg-marca-900 hover:text-white"
+              (click)="navegou.emit()"
+            >
+              <i [class]="item.icone" class="w-4 text-center"></i>
+              <span>{{ item.label }}</span>
+            </a>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+</nav>
