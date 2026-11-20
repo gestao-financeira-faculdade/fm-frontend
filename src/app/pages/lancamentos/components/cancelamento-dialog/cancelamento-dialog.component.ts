@@ -1,7 +1,9 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, effect, inject, input, model, output, signal, untracked } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 
+import { minimoAposTrimValidator } from '../../../../utils/form-validators';
 import { Lancamento } from '../../interfaces/lancamento.interface';
 import { LancamentoService } from '../../services/lancamento.service';
 
@@ -18,10 +20,11 @@ export class CancelamentoDialogComponent {
   readonly visivel = model(false);
   readonly lancamento = input.required<Lancamento>();
   readonly cancelado = output<void>();
+  readonly desatualizado = output<void>();
 
   readonly salvando = signal(false);
   readonly form = this.fb.nonNullable.group({
-    reason: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(500)]],
+    reason: ['', [Validators.required, minimoAposTrimValidator(5), Validators.maxLength(500)]],
   });
 
   constructor() {
@@ -37,7 +40,7 @@ export class CancelamentoDialogComponent {
   }
 
   confirmar(): void {
-    if (this.form.invalid) {
+    if (this.form.invalid || !this.form.getRawValue().reason.trim()) {
       this.form.markAllAsTouched();
       return;
     }
@@ -48,7 +51,13 @@ export class CancelamentoDialogComponent {
         this.cancelado.emit();
         this.visivel.set(false);
       },
-      error: () => this.salvando.set(false),
+      error: (e: HttpErrorResponse) => {
+        this.salvando.set(false);
+        if (e.status === 409 || e.status === 422) {
+          this.visivel.set(false);
+          this.desatualizado.emit();
+        }
+      },
     });
   }
 }

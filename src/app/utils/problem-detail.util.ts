@@ -43,9 +43,32 @@ const MENSAGENS_STATUS: Record<number, string> = {
   503: 'Serviço temporariamente indisponível. Tente novamente em instantes.',
 };
 
+const ROTULOS_CAMPO: Record<string, string> = {
+  name: 'Nome',
+  legalName: 'Razão social',
+  tradeName: 'Nome fantasia',
+  taxId: 'CPF/CNPJ',
+  description: 'Descrição',
+  originalAmount: 'Valor',
+  dueDate: 'Vencimento',
+  competenceDate: 'Competência',
+  reason: 'Motivo',
+  paidAmount: 'Valor pago',
+  currency: 'Moeda',
+};
+
+function rotuloCampo(campo: string): string {
+  const ultimo = campo.split('.').pop() ?? campo;
+  return ROTULOS_CAMPO[ultimo] ?? ultimo;
+}
+
 export function mensagemErro(erro: unknown): string {
   const p = extrairProblema(erro);
   const status = erro instanceof HttpErrorResponse ? erro.status : 0;
+  const campos = Object.entries(p?.fieldErrors ?? {});
+  if (campos.length) {
+    return campos.map(([campo, msg]) => `${rotuloCampo(campo)}: ${msg}`).join(' • ');
+  }
   if (p?.errors) {
     const lista = Array.isArray(p.errors)
       ? p.errors.map((e) => e.message).filter(Boolean)

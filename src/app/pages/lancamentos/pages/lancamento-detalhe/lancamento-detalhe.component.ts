@@ -141,8 +141,9 @@ export class LancamentoDetalheComponent {
     const opcional = <T>(obs: Observable<T>) => obs.pipe(catchError(() => of(null)));
     forkJoin({
       categoria: opcional(this.categoriaService.buscar(l.categoryId)),
-      conta: l.accountName ? of(null) : opcional(this.contaService.buscar(l.accountId)),
-      contraparte: l.counterpartyName ? of(null) : opcional(this.contraparteService.buscar(l.counterpartyId)),
+      conta: l.accountName || !l.accountId ? of(null) : opcional(this.contaService.buscar(l.accountId)),
+      contraparte:
+        l.counterpartyName || !l.counterpartyId ? of(null) : opcional(this.contraparteService.buscar(l.counterpartyId)),
     }).subscribe(({ categoria, conta, contraparte }) => {
       this.categoria.set(categoria);
       this.nomeConta.set(l.accountName ?? conta?.name ?? null);

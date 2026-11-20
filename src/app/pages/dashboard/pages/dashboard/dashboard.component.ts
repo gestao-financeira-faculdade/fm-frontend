@@ -56,8 +56,8 @@ export class DashboardComponent implements OnInit {
     this.dashboardService.coneIncerteza({ historyDays: this.diasHistorico(), referenceDate }).subscribe({
       next: (cone) => {
         this.historico.set(paraPontosHistorico(cone.historicalSeries));
-        this.projecao.set(paraPontosProjecao(cone.projectionCone));
-        this.simulacaoId.set(cone.simulationId ?? null);
+        this.projecao.set(paraPontosProjecao(cone.projectionCone?.dailyBands));
+        this.simulacaoId.set(cone.projectionCone?.simulationId ?? null);
         this.carregandoCone.set(false);
       },
       error: () => {

@@ -2,8 +2,16 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, effect, inject, model, output, signal, untracked } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 
+import { sementeValidator } from '../../../../utils/form-validators';
 import { mensagemErro } from '../../../../utils/problem-detail.util';
-import { CENARIOS_MAX, CENARIOS_MIN, HORIZONTES_DIAS, SIMULACAO_PADRAO } from '../../constants/simulacao.constants';
+import {
+  CENARIOS_MAX,
+  CENARIOS_MIN,
+  HORIZONTES_DIAS,
+  PERCENTUAL_MAX,
+  PERCENTUAL_MIN,
+  SIMULACAO_PADRAO,
+} from '../../constants/simulacao.constants';
 import { Simulacao } from '../../interfaces/simulacao.interface';
 import { SimulacaoService } from '../../services/simulacao.service';
 
@@ -25,6 +33,8 @@ export class NovaSimulacaoDialogComponent {
   readonly horizontes = HORIZONTES_DIAS.map((d) => ({ label: `${d} dias`, value: d }));
   readonly cenariosMin = CENARIOS_MIN;
   readonly cenariosMax = CENARIOS_MAX;
+  readonly percentualMin = PERCENTUAL_MIN;
+  readonly percentualMax = PERCENTUAL_MAX;
 
   readonly form = this.fb.group({
     horizonDays: [SIMULACAO_PADRAO.horizonDays, Validators.required],
@@ -32,9 +42,15 @@ export class NovaSimulacaoDialogComponent {
       SIMULACAO_PADRAO.numScenarios,
       [Validators.required, Validators.min(CENARIOS_MIN), Validators.max(CENARIOS_MAX)],
     ],
-    expectedDefaultRate: [SIMULACAO_PADRAO.expectedDefaultRate, [Validators.required, Validators.min(0), Validators.max(100)]],
-    variableCostShockPct: [SIMULACAO_PADRAO.variableCostShockPct, [Validators.required, Validators.min(-100), Validators.max(100)]],
-    randomSeed: [SIMULACAO_PADRAO.randomSeed],
+    expectedDefaultRate: [
+      SIMULACAO_PADRAO.expectedDefaultRate,
+      [Validators.required, Validators.min(PERCENTUAL_MIN), Validators.max(PERCENTUAL_MAX)],
+    ],
+    variableCostShockPct: [
+      SIMULACAO_PADRAO.variableCostShockPct,
+      [Validators.required, Validators.min(PERCENTUAL_MIN), Validators.max(PERCENTUAL_MAX)],
+    ],
+    randomSeed: [SIMULACAO_PADRAO.randomSeed, sementeValidator()],
   });
 
   constructor() {
@@ -67,7 +83,7 @@ export class NovaSimulacaoDialogComponent {
         numScenarios: v.numScenarios!,
         expectedDefaultRate: v.expectedDefaultRate!,
         variableCostShockPct: v.variableCostShockPct!,
-        randomSeed: v.randomSeed ?? undefined,
+        randomSeed: v.randomSeed?.trim() || undefined,
       })
       .subscribe({
         next: (simulacao) => {

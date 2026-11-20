@@ -12,3 +12,14 @@ export interface PontoProjecao {
   p75: number;
   p95: number;
 }
+
+export interface FaixaDiariaProjecao {
+  dayOffset: number;
+  date: string;
+  p01: number;
+  p05: number;
+  p25: number;
+  p50: number;
+  p75: number;
+  p95: number;
+}

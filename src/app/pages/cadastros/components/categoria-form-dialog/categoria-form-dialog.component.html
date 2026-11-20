@@ -10,7 +10,7 @@
   <form [formGroup]="form" id="form-categoria" (ngSubmit)="salvar()" class="space-y-4">
     <div>
       <label for="cat-nome" class="campo-rotulo">Nome *</label>
-      <input pInputText id="cat-nome" formControlName="name" class="w-full" placeholder="Ex.: Serviços em Nuvem" />
+      <input pInputText id="cat-nome" formControlName="name" maxlength="100" class="w-full" placeholder="Ex.: Serviços em Nuvem" />
       @if (form.controls.name.touched && form.controls.name.invalid) {
         <small class="campo-erro">Informe o nome da categoria.</small>
       }
