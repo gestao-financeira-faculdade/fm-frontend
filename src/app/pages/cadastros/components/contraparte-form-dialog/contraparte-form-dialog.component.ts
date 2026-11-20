@@ -2,7 +2,7 @@ import { Component, effect, inject, model, output, signal, untracked } from '@an
 import { FormBuilder, Validators } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 
-import { formatarCpfCnpj } from '../../../../utils/cpf-cnpj.util';
+import { formatarCpfCnpj, somenteDigitos } from '../../../../utils/cpf-cnpj.util';
 import { cpfCnpjValidator } from '../../../../utils/form-validators';
 import { TIPO_CONTRAPARTE_OPCOES, TipoContraparte } from '../../enums/tipo-contraparte.enum';
 import { Contraparte } from '../../interfaces/contraparte.interface';
@@ -27,7 +27,7 @@ export class ContraparteFormDialogComponent {
   readonly form = this.fb.nonNullable.group({
     legalName: ['', [Validators.required, Validators.maxLength(180)]],
     tradeName: ['', Validators.maxLength(180)],
-    taxId: ['', [Validators.required, cpfCnpjValidator()]],
+    taxId: ['', cpfCnpjValidator()],
     counterpartyType: [TipoContraparte.SUPPLIER, Validators.required],
   });
 
@@ -56,7 +56,7 @@ export class ContraparteFormDialogComponent {
     this.salvando.set(true);
     const valor = this.form.getRawValue();
     this.contraparteService
-      .criar({ ...valor, tradeName: valor.tradeName || undefined, taxId: formatarCpfCnpj(valor.taxId) })
+      .criar({ ...valor, tradeName: valor.tradeName || undefined, taxId: somenteDigitos(valor.taxId) || undefined })
       .subscribe({
         next: (contraparte) => {
           this.messageService.add({ severity: 'success', summary: 'Contraparte cadastrada', detail: contraparte.legalName });

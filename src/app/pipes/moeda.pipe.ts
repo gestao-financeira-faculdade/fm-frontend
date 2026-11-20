@@ -18,9 +18,19 @@ export class MoedaPipe implements PipeTransform {
   private formatador(currency: string): Intl.NumberFormat {
     let f = this.formatadores.get(currency);
     if (!f) {
-      f = new Intl.NumberFormat('pt-BR', { style: 'currency', currency });
+      f = this.criarFormatador(currency);
       this.formatadores.set(currency, f);
     }
     return f;
+  }
+
+  /** Moeda fora da ISO-4217 (dado legado) não pode derrubar a tela: cai para número com o código ao lado. */
+  private criarFormatador(currency: string): Intl.NumberFormat {
+    try {
+      return new Intl.NumberFormat('pt-BR', { style: 'currency', currency });
+    } catch {
+      const numero = new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      return { format: (v: number) => `${currency} ${numero.format(v)}` } as Intl.NumberFormat;
+    }
   }
 }
