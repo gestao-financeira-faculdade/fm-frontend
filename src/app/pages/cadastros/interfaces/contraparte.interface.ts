@@ -4,7 +4,7 @@ export interface Contraparte {
   id: string;
   legalName: string;
   tradeName?: string;
-  taxId: string;
+  taxId: string | null;
   counterpartyType: TipoContraparte | string;
   active?: boolean;
 }
@@ -12,7 +12,6 @@ export interface Contraparte {
 export interface ContraparteRequest {
   legalName: string;
   tradeName?: string;
-  /** Enviado formatado, como no exemplo do contrato: "12.345.678/0001-90". */
-  taxId: string;
+  taxId?: string;
   counterpartyType: TipoContraparte;
 }
