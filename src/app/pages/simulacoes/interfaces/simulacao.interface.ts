@@ -1,13 +1,15 @@
+import { FaixaDiariaProjecao } from '../../../shared/components/cone-incerteza-chart/cone-incerteza-chart.interface';
+
 /** Corpo (opcional) de POST /v1/simulations. */
 export interface SimulacaoRequest {
   horizonDays: number;
   numScenarios: number;
   expectedDefaultRate: number;
   variableCostShockPct: number;
-  randomSeed?: number | null;
+  randomSeed?: string | null;
 }
 
-/** SimulationResponse. dailyBands não é detalhado no contrato (normalizado em cone.util). */
+/** SimulationResponse. randomSeed vem como string: valores acima de 2^53 perdem precisão em number. */
 export interface Simulacao {
   id: string;
   horizonDays: number;
@@ -17,9 +19,9 @@ export interface Simulacao {
   ruinProbabilityPct: number;
   executionDevice: string;
   executionTimeMs: number;
-  dailyBands: Record<string, unknown>[];
+  dailyBands: FaixaDiariaProjecao[];
   expectedDefaultRate?: number;
   variableCostShockPct?: number;
-  randomSeed?: number | null;
+  randomSeed?: string | null;
   createdAt?: string;
 }

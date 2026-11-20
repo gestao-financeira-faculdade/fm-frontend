@@ -39,7 +39,7 @@
       <tr>
         <td class="font-medium text-slate-900">{{ cat.name }}</td>
         <td>
-          <p-tag [value]="tipoLabel[cat.categoryType]" [severity]="cat.categoryType === 'PAYABLE' ? 'danger' : 'success'" />
+          <p-tag [value]="tipoLabel[cat.categoryType]" [severity]="tipoSeveridade[cat.categoryType]" />
         </td>
         <td>
           @if (cat.requiresAttachmentAlways) {

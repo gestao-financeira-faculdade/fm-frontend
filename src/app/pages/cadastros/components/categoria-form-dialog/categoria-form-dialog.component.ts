@@ -2,7 +2,7 @@ import { Component, effect, inject, model, output, signal, untracked } from '@an
 import { FormBuilder, Validators } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 
-import { TIPO_LANCAMENTO_OPCOES, TipoLancamento } from '../../../../enums/tipo-lancamento.enum';
+import { TIPO_CATEGORIA_OPCOES, TipoCategoria } from '../../../../enums/tipo-categoria.enum';
 import { Categoria } from '../../interfaces/categoria.interface';
 import { CategoriaService } from '../../services/categoria.service';
 
@@ -20,11 +20,11 @@ export class CategoriaFormDialogComponent {
   readonly salvo = output<Categoria>();
 
   readonly salvando = signal(false);
-  readonly tipos = TIPO_LANCAMENTO_OPCOES;
+  readonly tipos = TIPO_CATEGORIA_OPCOES;
 
   readonly form = this.fb.nonNullable.group({
-    name: ['', [Validators.required, Validators.maxLength(120)]],
-    categoryType: [TipoLancamento.PAYABLE, Validators.required],
+    name: ['', [Validators.required, Validators.maxLength(100)]],
+    categoryType: [TipoCategoria.PAYABLE, Validators.required],
     requiresAttachmentAlways: [false],
     fixedCost: [false],
   });

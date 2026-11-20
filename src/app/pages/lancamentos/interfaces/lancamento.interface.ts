@@ -13,7 +13,7 @@ export interface LancamentoRequest {
   competenceDate: string;
   categoryId: string;
   accountId: string;
-  counterpartyId: string;
+  counterpartyId: string | null;
 }
 
 /**

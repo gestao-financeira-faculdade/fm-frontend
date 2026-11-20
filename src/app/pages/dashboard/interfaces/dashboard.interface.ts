@@ -1,4 +1,5 @@
 import { Money, Percentual } from '../../../interfaces/money.interface';
+import { FaixaDiariaProjecao } from '../../../shared/components/cone-incerteza-chart/cone-incerteza-chart.interface';
 
 /** ExecutiveKpiResponse (formato documentado no contrato). */
 export interface KpiExecutivo {
@@ -9,16 +10,21 @@ export interface KpiExecutivo {
   referenceDate: string;
 }
 
-/**
- * UncertaintyConeResponse. O contrato só nomeia historicalSeries e
- * projectionCone; os campos internos são inferidos e normalizados em
- * DashboardService.normalizarCone().
- */
+export interface ConeProjetado {
+  simulationId: string;
+  horizonDays: number;
+  numScenarios: number;
+  var99: Money;
+  medianP50: Money;
+  ruinProbabilityPct: Percentual;
+  executionDevice: string;
+  createdAt: string;
+  dailyBands: FaixaDiariaProjecao[];
+}
+
 export interface ConeIncertezaResponse {
-  historicalSeries: Record<string, unknown>[];
-  projectionCone: Record<string, unknown>[];
-  simulationId?: string;
-  referenceDate?: string;
+  historicalSeries: { date: string; balance: Money }[];
+  projectionCone: ConeProjetado | null;
 }
 
 export interface FiltroCone {

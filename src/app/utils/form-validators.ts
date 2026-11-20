@@ -25,3 +25,23 @@ export function intervaloDatasValidator(inicio: string, fim: string, chaveErro =
     return b.getTime() < a.getTime() ? { [chaveErro]: true } : null;
   };
 }
+
+/** Mínimo de caracteres contado depois do trim, como o backend faz. */
+export function minimoAposTrimValidator(minimo: number): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const valor = ((control.value as string | null) ?? '').trim();
+    if (!valor) return null;
+    return valor.length < minimo ? { minimoAposTrim: { minimo, atual: valor.length } } : null;
+  };
+}
+
+const SEMENTE_MAXIMA = 9223372036854775807n;
+
+/** Semente da simulação como texto: o backend usa long de 64 bits, acima do que number representa sem perda. */
+export function sementeValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const valor = ((control.value as string | null) ?? '').trim();
+    if (!valor) return null;
+    return /^\d{1,19}$/.test(valor) && BigInt(valor) <= SEMENTE_MAXIMA ? null : { semente: true };
+  };
+}

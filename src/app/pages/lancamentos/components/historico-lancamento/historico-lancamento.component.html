@@ -19,8 +19,8 @@
         </div>
         <div class="mt-2 text-sm text-slate-700">
           por <strong>{{ ator(evento) }}</strong>
-          @if (evento.clientIp) {
-            <span class="text-slate-400"> · IP {{ evento.clientIp }}</span>
+          @if (evento.ipAddress) {
+            <span class="text-slate-400"> · IP {{ evento.ipAddress }}</span>
           }
         </div>
         @if (evento.previousState || evento.newState) {

@@ -127,7 +127,7 @@
     (recarregar)="recarregar()"
     (irParaAnexos)="irParaAnexos()"
   />
-  <app-cancelamento-dialog [(visivel)]="dialogCancelamento" [lancamento]="l" (cancelado)="recarregar()" />
+  <app-cancelamento-dialog [(visivel)]="dialogCancelamento" [lancamento]="l" (cancelado)="recarregar()" (desatualizado)="recarregar()" />
 } @else if (naoEncontrado()) {
   <app-empty-state icone="pi pi-search" titulo="Lançamento não encontrado" mensagem="Verifique o endereço ou volte para a listagem.">
     <p-button label="Voltar para lançamentos" icon="pi pi-arrow-left" routerLink="/lancamentos" />

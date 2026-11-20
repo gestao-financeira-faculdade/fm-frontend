@@ -1,9 +1,9 @@
-import { TipoLancamento } from '../../../enums/tipo-lancamento.enum';
+import { TipoCategoria } from '../../../enums/tipo-categoria.enum';
 
 export interface Categoria {
   id: string;
   name: string;
-  categoryType: TipoLancamento;
+  categoryType: TipoCategoria;
   requiresAttachmentAlways: boolean;
   fixedCost: boolean;
   active?: boolean;
@@ -11,7 +11,7 @@ export interface Categoria {
 
 export interface CategoriaRequest {
   name: string;
-  categoryType: TipoLancamento;
+  categoryType: TipoCategoria;
   requiresAttachmentAlways: boolean;
   fixedCost: boolean;
 }

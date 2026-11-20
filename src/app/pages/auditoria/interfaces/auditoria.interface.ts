@@ -1,11 +1,6 @@
 import { AcaoAuditoria } from '../enums/acao-auditoria.enum';
 import { TipoEntidade } from '../enums/tipo-entidade.enum';
 
-/**
- * AuditLogItemResponse. O contrato cita snapshots antes/depois
- * (previousState/newState), IP do cliente e correlationId; os demais
- * nomes de campo são inferidos — ajuste conforme o backend.
- */
 export interface RegistroAuditoria {
   id: string;
   entityType: TipoEntidade | string;
@@ -13,13 +8,15 @@ export interface RegistroAuditoria {
   action: AcaoAuditoria | string;
   actorUserId?: string;
   actorName?: string;
+  actorRole?: string;
+  actorType?: string;
   actorEmail?: string;
   occurredAt?: string;
   createdAt?: string;
   timestamp?: string;
   previousState?: unknown;
   newState?: unknown;
-  clientIp?: string;
+  ipAddress?: string;
   correlationId?: string;
 }
 

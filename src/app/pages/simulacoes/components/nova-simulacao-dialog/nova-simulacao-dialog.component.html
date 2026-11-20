@@ -29,17 +29,26 @@
 
     <div>
       <label for="sim-inad" class="campo-rotulo">Inadimplência esperada (%) *</label>
-      <p-inputnumber inputId="sim-inad" formControlName="expectedDefaultRate" [minFractionDigits]="1" [maxFractionDigits]="2" suffix=" %" locale="pt-BR" styleClass="w-full" inputStyleClass="w-full" />
+      <p-inputnumber inputId="sim-inad" formControlName="expectedDefaultRate" [min]="percentualMin" [max]="percentualMax" [minFractionDigits]="1" [maxFractionDigits]="2" suffix=" %" locale="pt-BR" styleClass="w-full" inputStyleClass="w-full" />
+      @if (form.controls.expectedDefaultRate.touched && form.controls.expectedDefaultRate.invalid) {
+        <small class="campo-erro">Informe um percentual entre {{ percentualMin }} e {{ percentualMax }}.</small>
+      }
     </div>
     <div>
       <label for="sim-choque" class="campo-rotulo">Choque de custo variável (%) *</label>
-      <p-inputnumber inputId="sim-choque" formControlName="variableCostShockPct" [minFractionDigits]="1" [maxFractionDigits]="2" suffix=" %" locale="pt-BR" styleClass="w-full" inputStyleClass="w-full" />
+      <p-inputnumber inputId="sim-choque" formControlName="variableCostShockPct" [min]="percentualMin" [max]="percentualMax" [minFractionDigits]="1" [maxFractionDigits]="2" suffix=" %" locale="pt-BR" styleClass="w-full" inputStyleClass="w-full" />
+      @if (form.controls.variableCostShockPct.touched && form.controls.variableCostShockPct.invalid) {
+        <small class="campo-erro">Informe um percentual entre {{ percentualMin }} e {{ percentualMax }}.</small>
+      }
     </div>
 
     <div class="sm:col-span-2">
       <label for="sim-seed" class="campo-rotulo">Semente aleatória (opcional)</label>
-      <p-inputnumber inputId="sim-seed" formControlName="randomSeed" [useGrouping]="false" placeholder="Aleatória" styleClass="w-full" inputStyleClass="w-full" />
+      <input pInputText id="sim-seed" formControlName="randomSeed" inputmode="numeric" placeholder="Aleatória" class="w-full" />
       <small class="mt-1 block text-xs text-slate-500">Informe uma semente para obter resultados reproduzíveis.</small>
+      @if (form.controls.randomSeed.touched && form.controls.randomSeed.invalid) {
+        <small class="campo-erro">A semente deve ser um número inteiro de até 19 dígitos (máximo 9223372036854775807).</small>
+      }
     </div>
   </form>
 

@@ -23,4 +23,20 @@ describe('problem-detail.util', () => {
     expect(mensagemErro(erro(422, { detail: 'Conta inativa' }))).toBe('Conta inativa');
     expect(mensagemErro(erro(409, null))).toContain('alterado por outro usuário');
   });
+
+  it('mostra os erros por campo do 400 em vez do detail genérico', () => {
+    const corpo = {
+      status: 400,
+      detail: 'One or more request parameters failed validation.',
+      fieldErrors: { name: 'tamanho deve ser entre 0 e 100', 'request.taxId': 'CPF/CNPJ inválido' },
+    };
+    expect(mensagemErro(erro(400, corpo))).toBe('Nome: tamanho deve ser entre 0 e 100 • CPF/CNPJ: CPF/CNPJ inválido');
+  });
+
+  it('mantém o nome técnico quando o campo não tem rótulo conhecido', () => {
+    expect(mensagemErro(erro(400, { fieldErrors: { horizonDays: 'must be 30, 60 or 90' } }))).toBe(
+      'horizonDays: must be 30, 60 or 90',
+    );
+  });
 });
+

@@ -25,8 +25,8 @@ export class ContraparteFormDialogComponent {
   readonly tipos = TIPO_CONTRAPARTE_OPCOES;
 
   readonly form = this.fb.nonNullable.group({
-    legalName: ['', [Validators.required, Validators.maxLength(200)]],
-    tradeName: ['', Validators.maxLength(120)],
+    legalName: ['', [Validators.required, Validators.maxLength(180)]],
+    tradeName: ['', Validators.maxLength(180)],
     taxId: ['', [Validators.required, cpfCnpjValidator()]],
     counterpartyType: [TipoContraparte.SUPPLIER, Validators.required],
   });

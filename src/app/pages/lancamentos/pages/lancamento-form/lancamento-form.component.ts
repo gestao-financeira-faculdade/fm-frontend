@@ -6,6 +6,7 @@ import { MessageService } from 'primeng/api';
 import { catchError, forkJoin, of } from 'rxjs';
 
 import { MOEDA_PADRAO, MOEDAS } from '../../../../constants/moedas';
+import { categoriaAceitaTipo } from '../../../../enums/tipo-categoria.enum';
 import { TIPO_LANCAMENTO_OPCOES, TipoLancamento } from '../../../../enums/tipo-lancamento.enum';
 import { paraDataIso } from '../../../../utils/date.util';
 import { gerarUuid } from '../../../../utils/uuid.util';
@@ -71,7 +72,7 @@ export class LancamentoFormComponent implements OnInit {
   private readonly valor = toSignal(this.form.controls.originalAmount.valueChanges, { initialValue: null });
   private readonly categoriaId = toSignal(this.form.controls.categoryId.valueChanges, { initialValue: null });
 
-  readonly categoriasDoTipo = computed(() => this.categorias().filter((c) => c.categoryType === this.tipo()));
+  readonly categoriasDoTipo = computed(() => this.categorias().filter((c) => categoriaAceitaTipo(c.categoryType, this.tipo())));
 
   readonly exigiraComprovante = computed(() => {
     const categoria = this.categorias().find((c) => c.id === this.categoriaId());
@@ -93,7 +94,7 @@ export class LancamentoFormComponent implements OnInit {
     // Ao trocar o tipo, limpa a categoria se ela não pertencer ao novo tipo.
     this.form.controls.entryType.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((tipo) => {
       const atual = this.categorias().find((c) => c.id === this.form.controls.categoryId.value);
-      if (atual && atual.categoryType !== tipo) this.form.controls.categoryId.setValue(null);
+      if (atual && !categoriaAceitaTipo(atual.categoryType, tipo)) this.form.controls.categoryId.setValue(null);
     });
 
     this.form.valueChanges

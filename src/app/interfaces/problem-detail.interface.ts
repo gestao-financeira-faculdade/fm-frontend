@@ -11,7 +11,7 @@ export interface ProblemDetail {
    */
   code?: string;
   errorCode?: string;
-  /** Erros de validação por campo, quando o backend os envia. */
   errors?: { field?: string; message?: string }[] | Record<string, string>;
+  fieldErrors?: Record<string, string>;
   [extensao: string]: unknown;
 }

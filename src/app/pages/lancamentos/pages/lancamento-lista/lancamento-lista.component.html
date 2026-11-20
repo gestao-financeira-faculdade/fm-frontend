@@ -99,7 +99,11 @@
     <ng-template #emptymessage>
       <tr>
         <td colspan="8">
-          <app-empty-state icone="pi pi-wallet" titulo="Nenhum lançamento encontrado" mensagem="Ajuste os filtros ou cadastre um novo lançamento." />
+          @if (falhaNaBusca()) {
+            <app-empty-state icone="pi pi-exclamation-triangle" titulo="Não foi possível aplicar o filtro" mensagem="Revise os filtros informados e tente novamente." />
+          } @else {
+            <app-empty-state icone="pi pi-wallet" titulo="Nenhum lançamento encontrado" mensagem="Ajuste os filtros ou cadastre um novo lançamento." />
+          }
         </td>
       </tr>
     </ng-template>

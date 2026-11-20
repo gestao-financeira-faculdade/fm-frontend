@@ -41,6 +41,7 @@ export class LancamentoListaComponent implements OnInit {
 
   readonly lancamentos = signal<LancamentoResumo[]>([]);
   readonly total = signal(0);
+  readonly falhaNaBusca = signal(false);
   readonly carregando = signal(false);
   readonly primeiro = signal(0);
   readonly exportando = signal(false);
@@ -107,13 +108,19 @@ export class LancamentoListaComponent implements OnInit {
 
   private buscar(pagina: number): void {
     this.carregando.set(true);
+    this.falhaNaBusca.set(false);
     this.lancamentoService.listar(this.filtroAplicado, { page: pagina, size: this.tamanho }).subscribe({
       next: (resultado) => {
         this.lancamentos.set(resultado.items);
         this.total.set(resultado.totalElements);
         this.carregando.set(false);
       },
-      error: () => this.carregando.set(false),
+      error: () => {
+        this.lancamentos.set([]);
+        this.total.set(0);
+        this.falhaNaBusca.set(true);
+        this.carregando.set(false);
+      },
     });
   }
 

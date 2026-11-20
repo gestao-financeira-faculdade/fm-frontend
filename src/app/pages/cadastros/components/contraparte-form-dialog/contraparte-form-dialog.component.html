@@ -15,7 +15,7 @@
 
     <div>
       <label for="cp-razao" class="campo-rotulo">Razão social / Nome *</label>
-      <input pInputText id="cp-razao" formControlName="legalName" class="w-full" />
+      <input pInputText id="cp-razao" formControlName="legalName" maxlength="180" class="w-full" />
       @if (form.controls.legalName.touched && form.controls.legalName.invalid) {
         <small class="campo-erro">Informe a razão social.</small>
       }
@@ -24,7 +24,7 @@
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <div>
         <label for="cp-fantasia" class="campo-rotulo">Nome fantasia</label>
-        <input pInputText id="cp-fantasia" formControlName="tradeName" class="w-full" />
+        <input pInputText id="cp-fantasia" formControlName="tradeName" maxlength="180" class="w-full" />
       </div>
       <div>
         <label for="cp-doc" class="campo-rotulo">CPF / CNPJ *</label>

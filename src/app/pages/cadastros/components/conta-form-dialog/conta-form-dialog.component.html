@@ -10,7 +10,7 @@
   <form [formGroup]="form" id="form-conta" (ngSubmit)="salvar()" class="space-y-4">
     <div>
       <label for="conta-nome" class="campo-rotulo">Nome *</label>
-      <input pInputText id="conta-nome" formControlName="name" class="w-full" placeholder="Ex.: Conta Corrente Itaú" />
+      <input pInputText id="conta-nome" formControlName="name" maxlength="120" class="w-full" placeholder="Ex.: Conta Corrente Itaú" />
       @if (form.controls.name.touched && form.controls.name.invalid) {
         <small class="campo-erro">Informe o nome da conta.</small>
       }
