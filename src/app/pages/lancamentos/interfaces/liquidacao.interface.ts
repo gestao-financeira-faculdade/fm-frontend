@@ -12,10 +12,11 @@ export interface LiquidacaoRequest {
   expectedVersion: number;
 }
 
-/** SettlementResponse. Nomes além de status/residual são inferidos. */
 export interface LiquidacaoResponse {
-  entryId?: string;
-  status: StatusLancamento.SETTLED | StatusLancamento.PARTIALLY_SETTLED | string;
-  residualEntryId?: string | null;
-  settledAmount?: number;
+  id: string;
+  status: StatusLancamento;
+  settledAmount: number;
+  hasResidualChild: boolean;
+  residualEntryId: string | null;
+  version: number;
 }

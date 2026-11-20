@@ -100,7 +100,7 @@ export class LancamentoDetalheComponent {
   }
 
   aoLiquidar(resposta: LiquidacaoResponse): void {
-    const parcial = resposta.status === StatusLancamento.PARTIALLY_SETTLED;
+    const parcial = resposta.hasResidualChild;
     this.messageService.add({
       severity: 'success',
       summary: parcial ? 'Baixa parcial realizada' : 'Lançamento liquidado',

@@ -2,9 +2,9 @@ import { Opcao } from '../../../interfaces/money.interface';
 
 export enum StatusLancamento {
   PENDING = 'PENDING',
-  SETTLED = 'SETTLED',
-  PARTIALLY_SETTLED = 'PARTIALLY_SETTLED',
   OVERDUE = 'OVERDUE',
+  PAID = 'PAID',
+  RECEIVED = 'RECEIVED',
   CANCELLED = 'CANCELLED',
 }
 
@@ -12,9 +12,9 @@ type Severidade = 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contra
 
 export const STATUS_LANCAMENTO_META: Record<string, { label: string; severidade: Severidade }> = {
   [StatusLancamento.PENDING]: { label: 'Pendente', severidade: 'info' },
-  [StatusLancamento.SETTLED]: { label: 'Liquidado', severidade: 'success' },
-  [StatusLancamento.PARTIALLY_SETTLED]: { label: 'Liquidado parcialmente', severidade: 'warn' },
   [StatusLancamento.OVERDUE]: { label: 'Vencido', severidade: 'danger' },
+  [StatusLancamento.PAID]: { label: 'Pago', severidade: 'success' },
+  [StatusLancamento.RECEIVED]: { label: 'Recebido', severidade: 'success' },
   [StatusLancamento.CANCELLED]: { label: 'Cancelado', severidade: 'secondary' },
 };
 
