@@ -42,6 +42,6 @@ export function sementeValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const valor = ((control.value as string | null) ?? '').trim();
     if (!valor) return null;
-    return /^\d{1,19}$/.test(valor) && BigInt(valor) <= SEMENTE_MAXIMA ? null : { semente: true };
+    return /^\d{1,19}$/.test(valor) && BigInt(valor) >= 1n && BigInt(valor) <= SEMENTE_MAXIMA ? null : { semente: true };
   };
 }

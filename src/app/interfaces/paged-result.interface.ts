@@ -25,3 +25,6 @@ export function normalizarPagina<T>(raw: unknown): PagedResult<T> {
     size: Number(r['size'] ?? items.length),
   };
 }
+
+/** Limite de `size` aceito pelo backend em qualquer listagem paginada. */
+export const TAMANHO_MAXIMO_PAGINA = 500;

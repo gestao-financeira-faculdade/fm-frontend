@@ -20,13 +20,4 @@ export class RelatorioService {
       observe: 'response',
     });
   }
-
-  /** Variante POST /v1/reports/export (filtros no corpo). */
-  exportarViaPost(formato: FormatoRelatorio, filtro: FiltroLancamento): Observable<HttpResponse<Blob>> {
-    return this.http.post(
-      `${this.url}/export`,
-      { format: formato, ...filtro },
-      { responseType: 'blob', observe: 'response' },
-    );
-  }
 }
