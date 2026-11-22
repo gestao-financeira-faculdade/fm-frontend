@@ -10,10 +10,7 @@ export interface RegistroAuditoria {
   actorName?: string;
   actorRole?: string;
   actorType?: string;
-  actorEmail?: string;
   occurredAt?: string;
-  createdAt?: string;
-  timestamp?: string;
   previousState?: unknown;
   newState?: unknown;
   ipAddress?: string;
@@ -31,9 +28,9 @@ export interface FiltroAuditoria {
 }
 
 export function dataRegistro(r: RegistroAuditoria): string | undefined {
-  return r.occurredAt ?? r.createdAt ?? r.timestamp;
+  return r.occurredAt;
 }
 
 export function atorRegistro(r: RegistroAuditoria): string {
-  return r.actorName ?? r.actorEmail ?? r.actorUserId ?? 'Sistema';
+  return r.actorName ?? r.actorUserId ?? 'Sistema';
 }

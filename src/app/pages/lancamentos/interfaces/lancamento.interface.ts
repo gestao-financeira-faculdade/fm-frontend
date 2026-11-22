@@ -24,7 +24,7 @@ export interface Lancamento extends LancamentoRequest {
   id: string;
   status: StatusLancamento;
   outstandingAmount?: number;
-  paidAmount?: number;
+  settledAmount?: number;
   settlementDate?: string;
   parentEntryId?: string | null;
   /** Usado como expectedVersion na liquidação (lock otimista). */
@@ -68,17 +68,14 @@ export interface FiltroLancamento {
 /** FinancialEntryLineageNode — nó da árvore de desdobramentos. */
 export interface NoDesdobramento {
   id: string;
-  parentId?: string | null;
   parentEntryId?: string | null;
   description?: string;
   status: StatusLancamento | string;
   originalAmount: number;
   outstandingAmount?: number;
-  paidAmount?: number;
+  settledAmount?: number;
   currency?: string;
   dueDate?: string;
-  depth?: number;
-  children?: NoDesdobramento[];
 }
 
 export function saldoDevedor(l: Pick<Lancamento, 'outstandingAmount' | 'originalAmount'>): number {

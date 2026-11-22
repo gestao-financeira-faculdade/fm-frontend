@@ -73,6 +73,8 @@ export const MENSAGENS_ERRO: Record<string, string> = {
   INSUFFICIENT_SIMULATION_SCENARIOS: 'A simulação precisa de pelo menos 100.000 cenários.',
   EXCESSIVE_SIMULATION_SCENARIOS: 'A simulação aceita no máximo 1.000.000 de cenários.',
   INVALID_RANDOM_SEED: 'A semente deve ser um número inteiro positivo.',
+  INVALID_DEFAULT_RATE: 'A inadimplência esperada deve estar entre 0% e 100%.',
+  INVALID_COST_SHOCK: 'O choque de custo variável deve estar entre 0% e 100%.',
   SIMULATION_AMOUNT_OUT_OF_RANGE: 'Há valores grandes demais para a simulação. Revise os lançamentos em aberto.',
   RISK_ENGINE_UNAVAILABLE: 'O motor de simulação está indisponível. Tente novamente em instantes.',
   DATA_INTEGRITY_VIOLATION: 'A operação conflita com dados já cadastrados.',
