@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
   nome: 'prod',
-  apiUrl: '/api',
+  apiUrl: 'https://gf-api.onrender.com/api',
 };
