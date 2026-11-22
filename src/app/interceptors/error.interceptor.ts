@@ -17,9 +17,12 @@ import { SKIP_ERROR_TOAST } from './http-context.tokens';
  * AuthInterceptor, portanto só enxerga o resultado final (após refresh).
  * 401 é tratado pelo AuthInterceptor e não gera toast aqui.
  */
+const JANELA_DEDUPLICACAO_MS = 3000;
+
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
   private readonly messageService = inject(MessageService);
+  private readonly exibidosRecentemente = new Map<string, number>();
 
   intercept(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     return next.handle(req).pipe(
@@ -35,18 +38,33 @@ export class ErrorInterceptor implements HttpInterceptor {
         return normalizado$.pipe(
           catchError((final: HttpErrorResponse) => {
             if (final.status !== 401 && !req.context.get(SKIP_ERROR_TOAST)) {
-              this.messageService.add({
-                severity: final.status >= 500 || final.status === 0 ? 'error' : 'warn',
-                summary: this.titulo(final.status),
-                detail: mensagemErro(final),
-                life: 6000,
-              });
+              const summary = this.titulo(final.status);
+              const detail = mensagemErro(final);
+              if (this.deveExibir(`${summary}|${detail}`)) {
+                this.messageService.add({
+                  severity: final.status >= 500 || final.status === 0 ? 'error' : 'warn',
+                  summary,
+                  detail,
+                  life: 6000,
+                });
+              }
             }
             return throwError(() => final);
           }),
         );
       }),
     );
+  }
+
+  /** Requisições paralelas que falham pelo mesmo motivo geram um toast só. */
+  private deveExibir(chave: string): boolean {
+    const agora = Date.now();
+    const ultimo = this.exibidosRecentemente.get(chave);
+    this.exibidosRecentemente.set(chave, agora);
+    for (const [k, t] of this.exibidosRecentemente) {
+      if (agora - t > JANELA_DEDUPLICACAO_MS) this.exibidosRecentemente.delete(k);
+    }
+    return ultimo === undefined || agora - ultimo > JANELA_DEDUPLICACAO_MS;
   }
 
   private comCorpoTexto(erro: HttpErrorResponse, texto: string): HttpErrorResponse {

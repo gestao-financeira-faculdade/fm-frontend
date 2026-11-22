@@ -1,12 +1,12 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { TableLazyLoadEvent } from 'primeng/table';
 import { catchError, forkJoin, of } from 'rxjs';
 
 import { TIPO_LANCAMENTO_LABEL, TIPO_LANCAMENTO_OPCOES, TipoLancamento } from '../../../../enums/tipo-lancamento.enum';
-import { paraDataIso } from '../../../../utils/date.util';
+import { deDataIso, paraDataIso } from '../../../../utils/date.util';
 import { salvarResposta } from '../../../../utils/download.util';
 import { Categoria } from '../../../cadastros/interfaces/categoria.interface';
 import { ContaFinanceira } from '../../../cadastros/interfaces/conta.interface';
@@ -26,6 +26,7 @@ import { LancamentoService } from '../../services/lancamento.service';
 export class LancamentoListaComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly lancamentoService = inject(LancamentoService);
   private readonly categoriaService = inject(CategoriaService);
   private readonly contaService = inject(ContaService);
@@ -34,7 +35,7 @@ export class LancamentoListaComponent implements OnInit {
   readonly tipoOpcoes = TIPO_LANCAMENTO_OPCOES;
   readonly tipoLabel: Record<string, string> = TIPO_LANCAMENTO_LABEL;
   readonly statusOpcoes = STATUS_LANCAMENTO_OPCOES;
-  readonly tamanhoPagina = TAMANHO_PAGINA_PADRAO;
+  readonly linhas = signal(TAMANHO_PAGINA_PADRAO);
 
   readonly categorias = signal<Categoria[]>([]);
   readonly contas = signal<ContaFinanceira[]>([]);
@@ -64,6 +65,7 @@ export class LancamentoListaComponent implements OnInit {
   private tamanho = TAMANHO_PAGINA_PADRAO;
 
   ngOnInit(): void {
+    this.restaurarDaUrl(this.route.snapshot.queryParams);
     forkJoin({
       categorias: this.categoriaService.listar().pipe(catchError(() => of([]))),
       contas: this.contaService.listar().pipe(catchError(() => of([]))),
@@ -76,6 +78,7 @@ export class LancamentoListaComponent implements OnInit {
   aoCarregar(evento: TableLazyLoadEvent): void {
     const first = evento.first ?? 0;
     this.tamanho = evento.rows ?? TAMANHO_PAGINA_PADRAO;
+    this.linhas.set(this.tamanho);
     this.primeiro.set(first);
     this.buscar(Math.floor(first / this.tamanho));
   }
@@ -107,6 +110,7 @@ export class LancamentoListaComponent implements OnInit {
   }
 
   private buscar(pagina: number): void {
+    this.sincronizarUrl(pagina);
     this.carregando.set(true);
     this.falhaNaBusca.set(false);
     this.lancamentoService.listar(this.filtroAplicado, { page: pagina, size: this.tamanho }).subscribe({
@@ -136,5 +140,42 @@ export class LancamentoListaComponent implements OnInit {
       dueDateFrom: paraDataIso(inicio),
       dueDateTo: paraDataIso(fim ?? inicio),
     };
+  }
+
+  /** Filtros e página ficam na URL para sobreviver a recarregar e a voltar do detalhe. */
+  private sincronizarUrl(pagina: number): void {
+    const f = this.filtroAplicado;
+    const queryParams: Params = {
+      search: f.search || null,
+      entryType: f.entryType || null,
+      status: f.status || null,
+      categoryId: f.categoryId || null,
+      accountId: f.accountId || null,
+      de: f.dueDateFrom || null,
+      ate: f.dueDateTo || null,
+      page: pagina > 0 ? pagina : null,
+      size: this.tamanho !== TAMANHO_PAGINA_PADRAO ? this.tamanho : null,
+    };
+    void this.router.navigate([], { relativeTo: this.route, queryParams, replaceUrl: true });
+  }
+
+  private restaurarDaUrl(params: Params): void {
+    const data = (valor: unknown) => (typeof valor === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(valor) ? deDataIso(valor) : null);
+    const inicio = data(params['de']);
+    const fim = data(params['ate']);
+    this.filtros.patchValue({
+      search: params['search'] ?? '',
+      entryType: params['entryType'] ?? null,
+      status: params['status'] ?? null,
+      categoryId: params['categoryId'] ?? null,
+      accountId: params['accountId'] ?? null,
+      periodo: inicio ? [inicio, ...(fim ? [fim] : [])] : null,
+    });
+    this.filtroAplicado = this.montarFiltro();
+    const tamanho = Number(params['size']);
+    const pagina = Number(params['page']);
+    this.tamanho = Number.isInteger(tamanho) && tamanho > 0 ? tamanho : TAMANHO_PAGINA_PADRAO;
+    this.linhas.set(this.tamanho);
+    this.primeiro.set(Number.isInteger(pagina) && pagina > 0 ? pagina * this.tamanho : 0);
   }
 }

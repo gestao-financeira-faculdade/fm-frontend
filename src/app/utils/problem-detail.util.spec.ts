@@ -38,5 +38,24 @@ describe('problem-detail.util', () => {
       'horizonDays: must be 30, 60 or 90',
     );
   });
-});
 
+  it('traduz o código de negócio para pt-BR em vez de mostrar o detail em inglês', () => {
+    const corpo = { status: 422, errorCode: 'MISSING_FISCAL_ATTACHMENT', detail: 'Fiscal attachment is mandatory' };
+    expect(mensagemErro(erro(422, corpo))).toBe('Anexe o comprovante fiscal antes de liquidar este lançamento.');
+  });
+
+  it('erros por campo continuam tendo prioridade sobre o código', () => {
+    const corpo = { errorCode: 'VALIDATION_ERROR', fieldErrors: { name: 'não pode ficar em branco' } };
+    expect(mensagemErro(erro(400, corpo))).toBe('Nome: não pode ficar em branco');
+  });
+
+  it('código desconhecido cai no detail', () => {
+    expect(mensagemErro(erro(422, { errorCode: 'ALGO_NOVO', detail: 'Mensagem do servidor' }))).toBe('Mensagem do servidor');
+  });
+
+  it('traduz o rótulo e o texto de parâmetro inválido', () => {
+    expect(mensagemErro(erro(400, { errorCode: 'INVALID_PARAMETER', fieldErrors: { categoryId: 'invalid value' } }))).toBe(
+      'Categoria: valor inválido',
+    );
+  });
+});

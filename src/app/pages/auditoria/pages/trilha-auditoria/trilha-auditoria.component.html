@@ -98,7 +98,19 @@
     </ng-template>
     <ng-template #emptymessage>
       <tr>
-        <td colspan="6"><app-empty-state icone="pi pi-history" titulo="Nenhum registro encontrado" /></td>
+        <td colspan="6">
+          @switch (falha()) {
+            @case ('sem-permissao') {
+              <app-empty-state icone="pi pi-lock" titulo="Sem permissão" mensagem="Seu perfil não tem acesso à trilha de auditoria." />
+            }
+            @case ('erro') {
+              <app-empty-state icone="pi pi-exclamation-triangle" titulo="Não foi possível carregar a auditoria" mensagem="Revise os filtros e tente novamente." />
+            }
+            @default {
+              <app-empty-state icone="pi pi-history" titulo="Nenhum registro encontrado" />
+            }
+          }
+        </td>
       </tr>
     </ng-template>
   </p-table>

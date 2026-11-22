@@ -52,3 +52,18 @@ body {
 .historico-timeline .p-timeline-event-opposite {
   display: none;
 }
+
+/* O PrimeNG posiciona o toast com estilo inline; o toast global precisa ficar abaixo da topbar e dentro da tela no mobile. */
+.p-toast.toast-global {
+  top: 4.75rem !important;
+}
+
+@media (max-width: 640px) {
+  .p-toast.toast-global {
+    right: 1rem !important;
+    left: 1rem !important;
+    width: auto !important;
+    max-width: calc(100vw - 2rem);
+  }
+}
+

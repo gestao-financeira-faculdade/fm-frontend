@@ -47,7 +47,7 @@
     [lazy]="true"
     (onLazyLoad)="aoCarregar($event)"
     [paginator]="true"
-    [rows]="tamanhoPagina"
+    [rows]="linhas()"
     [first]="primeiro()"
     [totalRecords]="total()"
     [rowsPerPageOptions]="[10, 20, 50, 100]"

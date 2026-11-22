@@ -26,6 +26,14 @@ export function intervaloDatasValidator(inicio: string, fim: string, chaveErro =
   };
 }
 
+/** Recusa texto só com espaços, que o @NotBlank do backend também recusa. */
+export function naoVazioValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const valor = control.value as string | null;
+    return valor && !valor.trim() ? { required: true } : null;
+  };
+}
+
 /** Mínimo de caracteres contado depois do trim, como o backend faz. */
 export function minimoAposTrimValidator(minimo: number): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {

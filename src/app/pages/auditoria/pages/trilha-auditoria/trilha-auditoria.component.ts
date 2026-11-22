@@ -28,6 +28,7 @@ export class TrilhaAuditoriaComponent {
 
   readonly registros = signal<RegistroAuditoria[]>([]);
   readonly total = signal(0);
+  readonly falha = signal<'sem-permissao' | 'erro' | null>(null);
   readonly carregando = signal(false);
   readonly primeiro = signal(0);
   readonly erroFiltro = signal<string | null>(null);
@@ -83,13 +84,19 @@ export class TrilhaAuditoriaComponent {
 
   private buscar(pagina: number): void {
     this.carregando.set(true);
+    this.falha.set(null);
     this.auditoriaService.listar(this.filtroAplicado, { page: pagina, size: this.tamanho }).subscribe({
       next: (resultado) => {
         this.registros.set(resultado.items);
         this.total.set(resultado.totalElements);
         this.carregando.set(false);
       },
-      error: () => this.carregando.set(false),
+      error: (e: { status?: number }) => {
+        this.registros.set([]);
+        this.total.set(0);
+        this.falha.set(e.status === 403 ? 'sem-permissao' : 'erro');
+        this.carregando.set(false);
+      },
     });
   }
 }

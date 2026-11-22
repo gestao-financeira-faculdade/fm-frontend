@@ -34,7 +34,12 @@ export class AnexosLancamentoComponent {
   aoSelecionar(evento: FileSelectEvent, upload: FileUpload): void {
     const arquivo = evento.currentFiles[0];
     upload.clear();
-    if (!arquivo) return;
+    if (!arquivo) {
+      if (evento.files?.length) {
+        this.messageService.add({ severity: 'warn', summary: 'Arquivo inválido', detail: 'Envie apenas PDF, JPEG ou PNG.' });
+      }
+      return;
+    }
 
     const problema = this.validar(arquivo);
     if (problema) {

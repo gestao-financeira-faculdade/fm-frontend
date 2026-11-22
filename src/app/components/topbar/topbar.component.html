@@ -19,6 +19,7 @@
     class="flex cursor-pointer items-center gap-3 rounded-lg border-0 bg-transparent px-2 py-1 hover:bg-slate-100"
     (click)="menu.toggle($event)"
     aria-haspopup="true"
+    [attr.aria-label]="'Menu do usuário ' + (usuario()?.fullName ?? '')"
   >
     <p-avatar [label]="iniciais()" shape="circle" styleClass="!bg-marca-100 !text-marca-800 font-semibold" />
     <span class="hidden text-left leading-tight sm:block">

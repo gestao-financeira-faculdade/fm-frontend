@@ -1,4 +1,4 @@
-<app-page-header titulo="Novo lançamento" subtitulo="O lançamento é criado com status Pendente" icone="pi pi-plus">
+<app-page-header titulo="Novo lançamento" subtitulo="Nasce como Pendente, ou como Vencido se a data de vencimento já passou" icone="pi pi-plus">
   <p-button label="Voltar" icon="pi pi-arrow-left" severity="secondary" [text]="true" routerLink="/lancamentos" />
 </app-page-header>
 
@@ -14,7 +14,9 @@
         <label for="l-desc" class="campo-rotulo">Descrição *</label>
         <input pInputText id="l-desc" formControlName="description" class="w-full" placeholder="Ex.: Licença Cloud AWS" />
         @if (form.controls.description.touched && form.controls.description.invalid) {
-          <small class="campo-erro">Informe a descrição.</small>
+          <small class="campo-erro">
+            {{ form.controls.description.hasError('maxlength') ? 'Use no máximo 255 caracteres.' : 'Informe a descrição.' }}
+          </small>
         }
       </div>
       <div>

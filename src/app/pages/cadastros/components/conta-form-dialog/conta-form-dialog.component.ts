@@ -1,5 +1,6 @@
 import { Component, effect, inject, model, output, signal, untracked } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { naoVazioValidator } from '../../../../utils/form-validators';
 import { MessageService } from 'primeng/api';
 
 import { MOEDA_PADRAO, MOEDAS } from '../../../../constants/moedas';
@@ -25,7 +26,7 @@ export class ContaFormDialogComponent {
   readonly moedas = MOEDAS;
 
   readonly form = this.fb.nonNullable.group({
-    name: ['', [Validators.required, Validators.maxLength(120)]],
+    name: ['', [Validators.required, naoVazioValidator(), Validators.maxLength(120)]],
     accountType: [TipoConta.OPERATIONAL_LEDGER, Validators.required],
     initialBalance: [0, Validators.required],
     currency: [MOEDA_PADRAO, Validators.required],

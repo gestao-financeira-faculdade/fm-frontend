@@ -27,6 +27,7 @@ export class SimulacaoResultadoComponent {
   readonly simulacao = signal<Simulacao | null>(null);
   readonly carregando = signal(true);
   readonly semSimulacao = signal(false);
+  readonly naoEncontrada = signal(false);
   readonly dialogAberto = signal(false);
 
   readonly projecao = computed(() => paraPontosProjecao(this.simulacao()?.dailyBands));
@@ -55,6 +56,7 @@ export class SimulacaoResultadoComponent {
   private carregar(id: string | undefined): void {
     this.carregando.set(true);
     this.semSimulacao.set(false);
+    this.naoEncontrada.set(false);
     const fonte$: Observable<Simulacao> = id ? this.simulacaoService.buscar(id) : this.simulacaoService.ultima();
     fonte$.subscribe({
       next: (s) => {
@@ -64,7 +66,8 @@ export class SimulacaoResultadoComponent {
       error: (e: HttpErrorResponse) => {
         this.simulacao.set(null);
         this.carregando.set(false);
-        this.semSimulacao.set(e.status === 404);
+        this.semSimulacao.set(!id && e.status === 404);
+        this.naoEncontrada.set(!!id && (e.status === 404 || e.status === 400));
       },
     });
   }

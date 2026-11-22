@@ -1,6 +1,6 @@
 import { FormControl } from '@angular/forms';
 
-import { minimoAposTrimValidator, sementeValidator } from './form-validators';
+import { minimoAposTrimValidator, naoVazioValidator, sementeValidator } from './form-validators';
 
 describe('form-validators', () => {
   describe('sementeValidator', () => {
@@ -29,5 +29,10 @@ describe('form-validators', () => {
       expect(valida('  ab  ')).toBe(false);
       expect(valida('   abcde   ')).toBe(true);
     });
+  });
+
+  it('naoVazioValidator recusa texto só com espaços', () => {
+    expect(new FormControl('   ', naoVazioValidator()).hasError('required')).toBe(true);
+    expect(new FormControl(' Caixa ', naoVazioValidator()).valid).toBe(true);
   });
 });
