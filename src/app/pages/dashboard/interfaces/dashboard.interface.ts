@@ -6,6 +6,8 @@ export interface KpiExecutivo {
   consolidatedBalance: Money;
   totalReceivableToday: Money;
   totalPayableToday: Money;
+  totalReceivableOverdue: Money;
+  totalPayableOverdue: Money;
   monthlyDelinquencyRatePct: Percentual;
   referenceDate: string;
 }

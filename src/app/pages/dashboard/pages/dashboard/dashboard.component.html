@@ -12,7 +12,7 @@
   <p-button icon="pi pi-refresh" severity="secondary" [outlined]="true" ariaLabel="Atualizar" pTooltip="Atualizar" (onClick)="atualizar()" />
 </app-page-header>
 
-<section class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+<section class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
   <app-kpi-card
     titulo="Saldo consolidado"
     icone="pi pi-building-columns"
@@ -33,6 +33,22 @@
     tom="despesa"
     [valor]="formatar(kpis()?.totalPayableToday)"
     [carregando]="carregandoKpis()"
+  />
+  <app-kpi-card
+    titulo="Vencidos a receber"
+    icone="pi pi-clock"
+    tom="alerta"
+    [valor]="formatar(kpis()?.totalReceivableOverdue)"
+    [carregando]="carregandoKpis()"
+    legenda="Em aberto com vencimento anterior à data"
+  />
+  <app-kpi-card
+    titulo="Vencidos a pagar"
+    icone="pi pi-exclamation-circle"
+    tom="despesa"
+    [valor]="formatar(kpis()?.totalPayableOverdue)"
+    [carregando]="carregandoKpis()"
+    legenda="Em aberto com vencimento anterior à data"
   />
   <app-kpi-card
     titulo="Inadimplência mensal"

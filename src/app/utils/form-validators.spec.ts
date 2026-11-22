@@ -15,6 +15,7 @@ describe('form-validators', () => {
 
     it('recusa valores fora do long ou não numéricos', () => {
       expect(valida('9223372036854775808')).toBe(false);
+      expect(valida('0')).toBe(false);
       expect(valida('-1')).toBe(false);
       expect(valida('12a')).toBe(false);
       expect(valida('1.5')).toBe(false);

@@ -27,7 +27,7 @@ describe('CancelamentoDialogComponent', () => {
     c.form.setValue({ reason: '  ab  ' });
     c.confirmar();
 
-    http.expectNone('/api/v1/entries/e1/cancel');
+    http.expectNone((r) => r.url === '/api/v1/entries/e1');
     expect(c.form.controls.reason.hasError('minimoAposTrim')).toBe(true);
   });
 
@@ -36,9 +36,10 @@ describe('CancelamentoDialogComponent', () => {
     c.form.setValue({ reason: '   Duplicado no ERP   ' });
     c.confirmar();
 
-    const req = http.expectOne('/api/v1/entries/e1/cancel');
-    expect(req.request.body).toEqual({ reason: 'Duplicado no ERP' });
-    req.flush({});
+    const req = http.expectOne((r) => r.url === '/api/v1/entries/e1');
+    expect(req.request.method).toBe('DELETE');
+    expect(req.request.params.get('reason')).toBe('Duplicado no ERP');
+    req.flush(null, { status: 204, statusText: 'No Content' });
   });
 
   it('fecha e pede recarga da tela quando o backend recusa com 422', () => {
@@ -49,7 +50,7 @@ describe('CancelamentoDialogComponent', () => {
     c.form.setValue({ reason: 'Lançamento já liquidado' });
     c.confirmar();
 
-    http.expectOne('/api/v1/entries/e1/cancel').flush(
+    http.expectOne((r) => r.url === '/api/v1/entries/e1').flush(
       { status: 422, errorCode: 'ENTRY_NOT_CANCELLABLE' },
       { status: 422, statusText: 'Unprocessable Entity' },
     );

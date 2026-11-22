@@ -47,7 +47,7 @@
       <input pInputText id="sim-seed" formControlName="randomSeed" inputmode="numeric" placeholder="Aleatória" class="w-full" />
       <small class="mt-1 block text-xs text-slate-500">Informe uma semente para obter resultados reproduzíveis.</small>
       @if (form.controls.randomSeed.touched && form.controls.randomSeed.invalid) {
-        <small class="campo-erro">A semente deve ser um número inteiro de até 19 dígitos (máximo 9223372036854775807).</small>
+        <small class="campo-erro">A semente deve ser um número inteiro entre 1 e 9223372036854775807.</small>
       }
     </div>
   </form>

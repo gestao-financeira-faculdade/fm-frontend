@@ -47,24 +47,19 @@ export class LancamentoService {
     });
   }
 
-  /** POST /v1/entries/{id}/cancel — exclusivo ADMIN. */
-  cancelar(id: string, reason: string): Observable<Lancamento> {
-    return this.http.post<Lancamento>(`${this.url}/${id}/cancel`, { reason });
-  }
-
-  /** DELETE /v1/entries/{id} (soft delete) — exclusivo ADMIN. */
-  excluir(id: string, reason: string): Observable<Lancamento> {
-    return this.http.delete<Lancamento>(`${this.url}/${id}`, { params: { reason } });
+  /** DELETE /v1/entries/{id}?reason= (cancelamento lógico, 204) — exclusivo ADMIN. */
+  cancelar(id: string, reason: string): Observable<void> {
+    return this.http.delete<void>(`${this.url}/${id}`, { params: { reason } });
   }
 
   desdobramentos(id: string): Observable<NoDesdobramento[]> {
     return this.http.get<NoDesdobramento[]>(`${this.url}/${id}/splits`);
   }
 
-  /** GET /v1/entries/export/{csv|pdf} com os filtros da listagem. */
+  /** GET /v1/reports/entries/export?format=CSV|PDF com os filtros da listagem. */
   exportar(formato: 'csv' | 'pdf', filtro: FiltroLancamento): Observable<HttpResponse<Blob>> {
-    return this.http.get(`${this.url}/export/${formato}`, {
-      params: montarParams(filtro),
+    return this.http.get(`${environment.apiUrl}/v1/reports/entries/export`, {
+      params: montarParams({ format: formato.toUpperCase(), ...filtro }),
       responseType: 'blob',
       observe: 'response',
     });
