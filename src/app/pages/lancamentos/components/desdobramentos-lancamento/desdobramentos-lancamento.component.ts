@@ -28,25 +28,13 @@ export class DesdobramentosLancamentoComponent implements OnInit {
     });
   }
 
-  /** Aceita tanto lista aninhada (children) quanto lista plana com parentId. */
   private paraArvore(nos: NoDesdobramento[]): TreeNode<NoDesdobramento>[] {
-    const aninhada = nos.some((n) => n.children?.length);
-    if (aninhada) {
-      const mapear = (n: NoDesdobramento): TreeNode<NoDesdobramento> => ({
-        key: n.id,
-        data: n,
-        expanded: true,
-        children: (n.children ?? []).map(mapear),
-      });
-      return nos.map(mapear);
-    }
-
     const porId = new Map<string, TreeNode<NoDesdobramento>>();
     nos.forEach((n) => porId.set(n.id, { key: n.id, data: n, expanded: true, children: [] }));
     const raizes: TreeNode<NoDesdobramento>[] = [];
     nos.forEach((n) => {
       const no = porId.get(n.id)!;
-      const pai = n.parentId ?? n.parentEntryId;
+      const pai = n.parentEntryId;
       if (pai && porId.has(pai)) porId.get(pai)!.children!.push(no);
       else raizes.push(no);
     });
