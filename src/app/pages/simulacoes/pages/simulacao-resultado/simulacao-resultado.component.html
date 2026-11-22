@@ -76,6 +76,12 @@
       <p-button *appPermissao="permissoes.executar" label="Executar primeira simulação" icon="pi pi-play" (onClick)="dialogAberto.set(true)" />
     </app-empty-state>
   </div>
+} @else if (naoEncontrada()) {
+  <div class="rounded-xl border border-slate-200 bg-white shadow-sm">
+    <app-empty-state icone="pi pi-search" titulo="Simulação não encontrada" mensagem="Verifique o endereço ou abra a simulação mais recente.">
+      <p-button label="Ver última simulação" icon="pi pi-chart-scatter" routerLink="/simulacoes" />
+    </app-empty-state>
+  </div>
 } @else {
   <app-empty-state icone="pi pi-exclamation-triangle" titulo="Não foi possível carregar a simulação" />
 }

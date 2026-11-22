@@ -127,13 +127,13 @@ export class LancamentoDetalheComponent {
         this.carregando.set(false);
         this.versaoConteudo.update((v) => v + 1);
         this.carregarRelacionados(lancamento);
+        this.carregarAnexos();
       },
       error: (e: { status?: number }) => {
         this.carregando.set(false);
-        this.naoEncontrado.set(e.status === 404);
+        this.naoEncontrado.set(e.status === 404 || e.status === 400);
       },
     });
-    this.carregarAnexos();
   }
 
   /** Categoria sempre (requiresAttachmentAlways); conta/contraparte só se o nome não veio no response. */

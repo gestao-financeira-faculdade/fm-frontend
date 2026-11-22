@@ -37,7 +37,7 @@ export class LancamentoService {
   }
 
   buscar(id: string): Observable<Lancamento> {
-    return this.http.get<Lancamento>(`${this.url}/${id}`);
+    return this.http.get<Lancamento>(`${this.url}/${id}`, { context: semToastDeErro() });
   }
 
   /** Erros (409 / 422) são tratados no diálogo de liquidação, sem toast global. */

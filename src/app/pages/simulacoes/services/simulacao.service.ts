@@ -22,6 +22,6 @@ export class SimulacaoService {
   }
 
   buscar(id: string): Observable<Simulacao> {
-    return this.http.get<Simulacao>(`${this.url}/${id}`);
+    return this.http.get<Simulacao>(`${this.url}/${id}`, { context: semToastDeErro() });
   }
 }

@@ -46,7 +46,11 @@
     <ng-template #emptymessage>
       <tr>
         <td colspan="6">
-          <app-empty-state icone="pi pi-building-columns" titulo="Nenhuma conta cadastrada" />
+          @if (contas().length) {
+            <app-empty-state icone="pi pi-search" titulo="Nenhuma conta corresponde à busca" mensagem="Revise o termo pesquisado." />
+          } @else {
+            <app-empty-state icone="pi pi-building-columns" titulo="Nenhuma conta cadastrada" />
+          }
         </td>
       </tr>
     </ng-template>

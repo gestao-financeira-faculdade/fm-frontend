@@ -69,11 +69,14 @@ export class DashboardComponent implements OnInit {
   }
 
   aoMudarData(data: Date | null): void {
-    this.dataReferencia.set(data ?? new Date());
+    const nova = data ?? new Date();
+    if (paraDataIso(nova) === paraDataIso(this.dataReferencia())) return;
+    this.dataReferencia.set(nova);
     this.atualizar();
   }
 
   aoMudarHistorico(dias: number): void {
+    if (dias === this.diasHistorico()) return;
     this.diasHistorico.set(dias);
     this.atualizar();
   }
